@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* Reset body and html */
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+	    font-family: Arial, sans-serif;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4A148C;
+            padding: 0 20px;
+            height: 70px; /* Consistent height */
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1rem; /* Consistent text size */
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f9a826;
+            text-transform: uppercase;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        /* Main content styles */
+        #main-section {
+            flex: 1; /* Ensures it grows to fill space between header and footer */
+            padding: 20px;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #4A148C;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Profile Image Style */
+        .profile-section img {
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-section {
+            margin-top: 80px; /* Ensures profile content doesn't overlap the navbar */
+        }
+
+        .table thead {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            background: linear-gradient(145deg, #99a8b7, #6396cd);
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        .card-body h5, .card-body p {
+            color: #f8f9fa;
+        }
+
+        .registered-events-section {
+            margin-top: 30px;
+        }
+
+        /* Container Wider */
+        .container-fluid {
+            padding: 0 15px;
+            /* Adds some padding on the left and right */
+        }
+        /* Header Section */
+        header {
+            background-color: #005f99;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        /* Profile Section */
+        #profile-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Box Container for Performance and Events */
+        .box-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* Individual Box */
+        .box {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 48%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Title for Registered Events and Top Performance */
+        .box h3 {
+            color: #005f99;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Performance and Event Items */
+        .performance-item, .registration-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        /* Spinner for Loading */
+        #loading-spinner {
+            display: none;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .box-container {
+                flex-direction: column;
+            }
+
+            .box {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">ATHLETE</div>
+    <ul>
+        <li><a href="AthleteHome.html">Home</a></li>
+        <li><a href="AthleteEvent.html">Events</a></li>
+        <li><a href="CoachesForAthlete.html">Coaches</a></li>
+        <li><a href="AthleteResult.html">Results</a></li>
+        <li><a href="AthleteNews.html">News</a></li>
+        <li><a href="AthleteProfile.html">Profile</a></li>
+        <li><a href="#" id="logout-button">Logout</a></li>
+    </ul>
+</div>
+<!-- Container for Profile Section -->
+<div class="container mt-5" id="main-section">
+    <!-- Profile Section -->
+    <div class="profile-section d-flex align-items-center mt-4">
+        <img alt="Athlete Picture" id="profile-image" src="images/user.png"
+             style="width: 100px; height: 100px; object-fit: cover;">
+        <div class="ms-4">
+            <h3 id="profile-name">Loading...</h3>
+            <p>
+                <strong>Email :</strong> <span id="email">Loading...</span><br>
+                <strong>Date of Birth:</strong> <span id="dob">Loading...</span><br>
+                <strong>Gender:</strong> <span id="gender">Loading...</span><br>
+                <strong>Height:</strong> <span id="height">Loading...</span><br>
+                <strong>Weight:</strong> <span id="weight">Loading...</span><br>
+                <strong>Category:</strong> <span id="category">Loading...</span><br>
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Top Performance Section -->
+    <div class="mt-5" id="top-performance-section">
+        <h4>Top Performance</h4>
+        <div class="mt-3" id="top-performance-content">
+            <p id="top-performance-message">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Registered Events Section -->
+    <div class="mt-5" id="registered-events-section">
+        <h4>Registered Events</h4>
+        <div class="mt-3" id="registered-events-content">
+            <p id="registered-events-message">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner for Profile, Top Performance, and Registered Events -->
+    <div class="mt-4" id="loading-spinner" style="display: none; text-align: center;">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading, please wait...</p>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Sports Management System. All rights reserved.</p>
+</footer>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"></script>
+<script>
+    // Function to get the token from localStorage
+    function getToken() {
+    return localStorage.getItem('token');  // Retrieve the token from localStorage
+    }
+
+    // Function to make API calls with token in headers
+    async function makeApiCall(url, method = 'GET', body = null) {
+    const token = getToken();  // Get token from localStorage
+    if (!token) {
+    alert("Session expired. Please log in again.");
+    window.location.href = 'Login.html';  // Redirect to login page if token is missing
+    return;
+    }
+
+    const headers = {
+    'Authorization': `Bearer ${token}`,  // Include the token in Authorization header
+    'Content-Type': 'application/json',  // Set content type to JSON
+    };
+
+    const options = {
+    method: method,
+    headers: headers,
+    };
+
+    if (body) {
+    options.body = JSON.stringify(body);  // Add body to the request if present
+    }
+
+    try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+    throw new Error('API request failed');
+    }
+    return await response.json();  // Parse and return JSON data
+    } catch (error) {
+    console.error('Error with API call:', error);
+    alert('Error with API call. Please try again.');
+    return null;
+    }
+    }
+
+    // Function to fetch and display profile
+    async function fetchProfile() {
+    const email = localStorage.getItem('email');
+    const roleId = localStorage.getItem('roleId'); // Assuming roleId is stored in localStorage
+
+    if (!email || !roleId) {
+    alert("Invalid session data. Please log in again.");
+    window.location.href = 'Login.html';  // Redirect if session data is invalid
+    return;
+    }
+
+    const loadingIndicator = document.getElementById('loading-spinner');
+    loadingIndicator.style.display = 'block';  // Show loading spinner
+
+    try {
+    // Fetching Profile Data
+    const data = await makeApiCall(`http://localhost:8080/api/athlete/profile?email=${email}`);
+
+    if (!data) return;
+
+    // Populate profile data
+    document.getElementById('profile-image').src = `data:image/png;base64,${data.imageLink}`;
+    document.getElementById('profile-name').textContent = data.name || 'N/A';
+    document.getElementById('email').textContent = email || 'N/A';
+    document.getElementById('dob').textContent = data.birthDate || 'N/A';
+    document.getElementById('gender').textContent = data.gender || 'N/A';
+    document.getElementById('height').textContent = data.height ? `${data.height} cm` : 'N/A';
+    document.getElementById('weight').textContent = data.weight ? `${data.weight} kg` : 'N/A';
+    document.getElementById('category').textContent = data.category || 'N/A';
+
+    // Now fetch Top Performance and Registered Events
+    fetchTopPerformance(roleId);
+    fetchRegisteredEvents(roleId);
+    } catch (error) {
+    console.error('Error fetching profile:', error);
+    alert('Error fetching profile. Please try again.');
+    } finally {
+    loadingIndicator.style.display = 'none';  // Hide loading spinner
+    }
+    }
+
+    // Fetch and display top performance data
+    async function fetchTopPerformance(roleId) {
+    const topPerformanceSection = document.getElementById('top-performance-section');
+    const topPerformanceMessage = document.getElementById('top-performance-message');
+    const topPerformanceContent = document.getElementById('top-performance-content');
+
+    try {
+    const results = await makeApiCall(`http://localhost:8080/api/result/search?athleteId=${roleId}`);
+
+    if (!results || results.length === 0) {
+    topPerformanceMessage.textContent = "You are yet to give your top performance.";
+    return;
+    }
+
+    let topPerformanceHtml = '';
+    for (let result of results) {
+    if (result.score >= 90 || ['A', 'A+', 'A++'].includes(result.score)) {
+    // Fetch event details for each performance
+    const event = await makeApiCall(`http://localhost:8080/api/events/search?id=${result.eventId}`);
+
+    topPerformanceHtml += `
+    <div class="performance-item">
+        <h5>Event: ${event.eventName}</h5>
+        <p>Meet: ${event.meetName}</p>
+        <p>Category: ${event.category}</p>
+        <p>Score: ${result.score}</p>
+    </div>
+    `;
+    }
+    }
+
+    if (topPerformanceHtml) {
+    topPerformanceContent.innerHTML = topPerformanceHtml;
+    } else {
+    topPerformanceMessage.textContent = "You are yet to give your top performance.";
+    }
+    } catch (error) {
+    console.error('Error fetching top performance:', error);
+    topPerformanceMessage.textContent = "Error loading top performance.";
+    }
+    }
+
+    // Fetch and display registered events data
+    async function fetchRegisteredEvents(roleId) {
+    const registeredEventsSection = document.getElementById('registered-events-section');
+    const registeredEventsMessage = document.getElementById('registered-events-message');
+    const registeredEventsContent = document.getElementById('registered-events-content');
+
+    try {
+    const registrations = await makeApiCall(`http://localhost:8080/api/registration/search?athleteId=${roleId}`);
+
+    if (!registrations || registrations.length === 0) {
+    registeredEventsMessage.textContent = "You have not registered for any event.";
+    return;
+    }
+
+    let registeredEventsHtml = '';
+    for (let registration of registrations) {
+    // Fetch event details for each registration
+    const event = await makeApiCall(`http://localhost:8080/api/events/search?id=${registration.eventId}`);
+
+    registeredEventsHtml += `
+    <div class="registration-item">
+        <h5>Event: ${event.eventName}</h5>
+        <p>Category: ${event.category}</p>
+        <p>Registration Date: ${registration.registrationDate}</p>
+        <p>Status: ${registration.status}</p>
+        <p>Location: ${event.location}</p>
+    </div>
+    `;
+    }
+
+    registeredEventsContent.innerHTML = registeredEventsHtml;
+    } catch (error) {
+    console.error('Error fetching registered events:', error);
+    registeredEventsMessage.textContent = "Error loading registered events.";
+    }
+    }
+
+    // Ensure user is logged in
+    if (!localStorage.getItem('token')) {
+    window.location.href = 'Login.html';  // Redirect to login page if no token is present
+    }
+
+    // Fetch profile on page load
+    window.onload = fetchProfile;
+</script>
+</body>
+
+</html>

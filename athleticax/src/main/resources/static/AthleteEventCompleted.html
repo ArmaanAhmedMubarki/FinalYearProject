@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Completed Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Reset body and html */
+         body, html {
+             margin: 0;
+             padding: 0;
+             min-height: 100vh;
+             display: flex;
+             flex-direction: column;
+             font-family: Arial, sans-serif;
+         }
+
+         /* Navbar styles */
+         .navbar {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             background-color: #4A148C;
+             padding: 0 20px;
+             height: 70px; /* Consistent height */
+             color: #fff;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             font-size: 1rem; /* Consistent text size */
+         }
+
+         .navbar .logo {
+             font-size: 1.5rem;
+             font-weight: bold;
+             color: #f9a826;
+             text-transform: uppercase;
+         }
+
+         .navbar ul {
+             list-style: none;
+             display: flex;
+             gap: 20px;
+             margin: 0;
+         }
+
+         .navbar ul li {
+             display: inline;
+         }
+
+         .navbar ul li a {
+             text-decoration: none;
+             color: #fff;
+             font-size: 1rem;
+             transition: color 0.3s ease, background-color 0.3s ease;
+             padding: 10px 15px;
+             border-radius: 5px;
+         }
+
+         .navbar ul li a:hover {
+             background-color: #6A1B9A;
+             color: #f9a826;
+         }
+         .section-title {
+             font-size: 2.8rem;
+             color: #444;
+             text-align: center;
+             margin-bottom: 40px;
+             text-transform: uppercase;
+             letter-spacing: 1.5px;
+             animation: fadeInDown 1s ease;
+          }
+         .events-container {
+             display: flex;
+             flex-wrap: wrap;
+             gap: 20px;
+             justify-content: center;
+         }
+         .event-card {
+             border: 1px solid #ccc;
+             border-radius: 8px;
+             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+             padding: 16px;
+             text-align: center;
+             max-width: 293px;
+             margin : 10px;
+         }
+         .event-image {
+             max-width: 100%;
+             border-radius: 8px;
+         }
+         .card {
+             height: 100%;
+         }
+
+         /* Main content styles */
+         #main-section {
+             flex: 1; /* Ensures it grows to fill space between header and footer */
+             max-width: 1200px;
+             margin: 20px auto;
+             padding: 20px;
+         }
+
+         /* Footer styles */
+         footer {
+             text-align: center;
+             padding: 15px 0;
+             background-color: #4A148C;
+             color: #fff;
+             flex-shrink: 0;
+         }
+
+         footer p {
+             margin: 0;
+             font-size: 0.9rem;
+         }
+         .btn{
+             background-color: #4A148C;
+             color: white;
+         }
+         .btn:hover {
+             background-color: #6A1B9A;
+             color: #f9a826;
+         }
+        .table-warning {
+             background-color: #fff3cd !important;
+             font-weight: bold;
+         }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">ATHLETE</div>
+    <ul>
+        <li><a href="AthleteHome.html">Home</a></li>
+        <li><a href="AthleteEvent.html">Events</a></li>
+        <li><a href="CoachesForAthlete.html">Coaches</a></li>
+        <li><a href="AthleteResult.html">Results</a></li>
+        <li><a href="AthleteNews.html">News</a></li>
+        <li><a href="AthleteProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container mt-5" id="main-section">
+    <h1 class="section-title">Completed Events</h1>
+    <div class="text-center" id="loading">Loading events...</div>
+    <div class="container">
+        <div class="row g-3" id="events-container"></div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="resultsModal" tabindex="-1" aria-labelledby="resultsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultsModalLabel">Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 id="publishDate"></h6>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>SL No</th>
+                        <th>Athlete Name</th>
+                        <th>Score</th>
+                        <th>Remarks</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script src="TokenCheck.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    // Helper function to format the current date
+    function getTodayDate() {
+        const today = new Date();
+        return today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+    }
+
+    // Fetch events data
+    async function fetchCompletedEvents() {
+        const loadingElement = document.getElementById('loading');
+        const eventsContainer = document.getElementById('events-container');
+        const token = localStorage.getItem('token'); // Retrieve token from local storage
+
+        try {
+            const response = await fetch('http://localhost:8080/api/events', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+            const today = getTodayDate();
+            const filteredEvents = data.filter(event => event.eventDate < today);
+
+            if (filteredEvents.length === 0) {
+                loadingElement.innerText = 'No completed events!';
+                return;
+            }
+
+            loadingElement.classList.add('d-none');
+            eventsContainer.classList.remove('d-none');
+
+            filteredEvents.forEach(event => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+
+                eventCard.innerHTML = `
+                    <img src="data:image/jpeg;base64,${event.imageLink}" alt="${event.eventName}" class="event-image">
+                    <h3>${event.eventName}</h3>
+                    <p><strong>Category:</strong> ${event.category}</p>
+                    <p><strong>Date:</strong> ${event.eventDate}</p>
+                    <p><strong>Meet:</strong> ${event.meetName}</p>
+                    <p><strong>Location:</strong> ${event.location}</p>
+                    <button class="btn mt-2" onclick="viewResults(${event.id})">View Result</button>
+                `;
+
+                eventsContainer.appendChild(eventCard);
+            });
+        } catch (error) {
+            loadingElement.innerText = 'Error fetching events.';
+            console.error('Error fetching events:', error);
+        }
+    }
+
+    async function viewResults(eventId) {
+    const token = localStorage.getItem('token');
+    const roleId = parseInt(localStorage.getItem('roleId')); // Assuming roleId is stored in localStorage
+
+    try {
+        // Fetch results for the event
+        const resultsResponse = await fetch(`http://localhost:8080/api/result/search?eventId=${eventId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const results = await resultsResponse.json();
+
+        // Get publish date
+        const publishDate = results[0]?.publishDate || "Unknown Date";
+        document.getElementById('publishDate').innerText = `Publish Date: ${publishDate}`;
+
+        // Clear the table body
+        const resultsTableBody = document.getElementById('resultsTableBody');
+        resultsTableBody.innerHTML = '';
+
+        // Fetch athlete details and build table rows
+        for (let i = 0; i < results.length; i++) {
+            const result = results[i];
+
+            // Fetch athlete name
+            const athleteResponse = await fetch(`http://localhost:8080/api/athlete/profile/search?id=${result.athleteId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const athlete = await athleteResponse.json();
+
+            // Create a table row
+            const row = document.createElement('tr');
+                if (result.athleteId === roleId) {
+                    row.classList.add('table-warning'); // Highlight row for logged-in athlete
+                    }
+                row.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${athlete.name}</td>
+                <td>${result.score}</td>
+                <td>${result.remarks}</td>
+            `;
+
+            resultsTableBody.appendChild(row);
+        }
+
+        // Show the modal
+        const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+        resultsModal.show();
+    } catch (error) {
+        console.error("Error fetching results or athlete data:", error);
+    }
+}
+
+
+    // Load completed events on page load
+    document.addEventListener('DOMContentLoaded', fetchCompletedEvents);
+</script>
+</body>
+</html>

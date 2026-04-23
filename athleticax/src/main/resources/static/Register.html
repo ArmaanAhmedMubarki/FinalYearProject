@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background: url('images/LoginRegister.jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4A148C;
+            padding: 0 20px;
+            height: 70px; /* Consistent height */
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1rem; /* Consistent text size */
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f9a826;
+            text-transform: uppercase;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        /* Main content styles */
+        #main-section {
+            flex: 1; /* Ensures it grows to fill space between header and footer */
+            padding: 35px;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #4A148C;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, select {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4A148C;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #6A1B9A;
+             color: #f9a826;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        p a {
+            color: #4A148C;
+            text-decoration: none;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* Popup Styles */
+        #popup-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            text-align: center;
+            width: 350px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .popup-content {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
+        #popup-text {
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .popup-close-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-close-btn:hover {
+            background-color: #0056b3;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        body.popup-active::after {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">SPORTS PORTAL</div>
+    <ul>
+        <li><a href="Welcome.html">Home</a></li>
+        <li><a href="PublicEvent.html">Events</a></li>
+        <li><a href="PublicNews.html">News</a></li>
+        <li><a href="Login.html">Login</a></li>
+        <li><a href="Register.html">Sign Up</a></li>
+    </ul>
+</nav>
+<div id="main-section">
+<div class="container">
+    <h2>Register</h2>
+    <form id="registerForm" method="post" novalidate>
+        <input id="name" placeholder="Full Name" required type="text">
+        <div class="error-message" id="nameError"></div>
+
+        <input id="email" placeholder="Email" required type="email">
+        <div class="error-message" id="emailError"></div>
+
+        <input id="password" placeholder="Password" required type="password">
+        <div class="error-message" id="passwordError"></div>
+
+        <input id="confirmPassword" placeholder="Confirm Password" required type="password">
+        <div class="error-message" id="confirmPasswordError"></div>
+
+        <select id="role" required>
+            <option disabled selected value="">Select Role</option>
+            <option value="COACH">Coach</option>
+            <option value="ATHLETE">Athlete</option>
+            <option value="ADMIN">Admin</option>
+        </select>
+        <div class="error-message" id="roleError"></div>
+
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="Login.html">Login here</a></p>
+</div>
+</div>
+<!-- Popup Message -->
+<div class="hidden" id="popup-message">
+    <div class="popup-content">
+        <span id="popup-text"></span>
+        <button class="popup-close-btn" id="ok-popup">Ok</button>
+    </div>
+</div>
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script>
+    const registerForm = document.getElementById('registerForm');
+    const popup = document.getElementById("popup-message");
+    const popupText = document.getElementById("popup-text");
+    const okPopup = document.getElementById("ok-popup");
+
+    // Helper function to display validation messages
+    function setValidationMessage(input, message) {
+        input.setCustomValidity(message);
+        input.reportValidity();
+    }
+
+    // Add input-specific validation
+    registerForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        let valid = true;
+
+        // Full Name validation
+        const nameInput = document.getElementById('name');
+        if (nameInput.value.trim().length < 4) {
+            setValidationMessage(nameInput, 'Full Name must be at least 4 characters long.');
+            valid = false;
+        } else {
+            setValidationMessage(nameInput, '');
+        }
+
+        // Email validation
+        const emailInput = document.getElementById('email');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+            setValidationMessage(emailInput, 'Email must have an "@" followed by domain extension (Eg : john@gmail.com)');
+            valid = false;
+        } else {
+            setValidationMessage(emailInput, '');
+        }
+
+        // Password validation
+        const passwordInput = document.getElementById('password');
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\d)[A-Za-z\d!@#$%^&*]{4,}$/;
+        if (!passwordRegex.test(passwordInput.value.trim())) {
+            setValidationMessage(passwordInput, 'Password must have an uppercase, lowercase, digit, and special character (e.g., John@123).');
+            valid = false;
+        } else {
+            setValidationMessage(passwordInput, '');
+        }
+
+        // Confirm Password validation
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        if (confirmPasswordInput.value.trim() !== passwordInput.value.trim()) {
+            setValidationMessage(confirmPasswordInput, 'Passwords do not match.');
+            valid = false;
+        } else {
+            setValidationMessage(confirmPasswordInput, '');
+        }
+
+        // Role validation
+        const roleInput = document.getElementById('role');
+        if (!roleInput.value.trim()) {
+            setValidationMessage(roleInput, 'Please select a role.');
+            valid = false;
+        } else {
+            setValidationMessage(roleInput, '');
+        }
+
+        // Submit if valid
+        if (valid) {
+            fetch('http://localhost:8080/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: nameInput.value,
+                    email: emailInput.value,
+                    password: passwordInput.value,
+                    role: roleInput.value,
+                }),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        // Display the success message in the popup
+                        popupText.textContent = "Registration successful! Please log in.";
+                        popup.classList.remove("hidden");
+                        document.body.classList.add("popup-active");
+                    } else {
+                        alert('Registration failed. Please try again.');
+                    }
+                })
+                .catch(() => {
+                    alert('An error occurred. Please try again later.');
+                });
+        }
+    });
+
+    // Redirect to login page when "Ok" button is clicked
+    okPopup.addEventListener("click", function () {
+        window.location.href = 'Login.html';
+    });
+</script>
+</body>
+</html>
