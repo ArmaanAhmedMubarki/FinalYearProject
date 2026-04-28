@@ -1,8 +1,6 @@
 package com.sports.athleticax.repository;
 
 import com.sports.athleticax.entity.Registration;
-import com.sports.athleticax.entity.User;
-import com.sports.athleticax.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,5 +17,6 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
     List<Registration> findByAthleteId(Long athleteId); // Find by athleteId
 
     List<Registration> findByEventId(Long eventId); // Find by eventId
+    boolean existsByEventIdAndAthleteId(Long eventId, Long athleteId);
 }
 
