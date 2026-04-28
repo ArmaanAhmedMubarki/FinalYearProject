@@ -250,194 +250,271 @@
 <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="TokenCheck.js"></script>
 <script>
-
-    // Toggle visibility of the edit profile section
-    function editProfile() {
-      const editForm = document.querySelector(".edit-form-container");
-      editForm.style.display = editForm.style.display === "none" || editForm.style.display === "" ? "block" : "none";
+    /* =========================
+       Toggle Edit Form
+    ========================= */
+    function editProfile()
+    {
+        const editForm = document.querySelector(".edit-form-container");
+        editForm.style.display =
+            editForm.style.display === "none" || editForm.style.display === ""
+                ? "block"
+                : "none";
     }
 
-    // Fetch athlete profile and populate fields
-async function fetchProfile() {
-  const email = localStorage.getItem("email");
-  const token = localStorage.getItem("token");
-  const athleteId = localStorage.getItem("roleId"); // Assuming athleteId is stored in localStorage
+    /* =========================
+       Main Fetch Function
+    ========================= */
+    async function fetchProfile()
+    {
+        const email = localStorage.getItem("email");
+        const token = localStorage.getItem("token");
+        const athleteId = localStorage.getItem("roleId");
 
-  if (!email || !token || !athleteId) {
-    alert("Session expired. Please log in again.");
-    window.location.href = 'Login.html';
-    return;
-  }
-
-  try {
-    // Fetch and populate profile
-    await fetchAndPopulateProfile(email, token);
-
-    // Fetch and display coach information
-    await fetchAndDisplayCoachInfo(athleteId, token);
-  } catch (error) {
-    console.error(error);
-    alert("Error fetching profile. Please try again.");
-  }
-}
-
-// Fetch and populate athlete's profile
-async function fetchAndPopulateProfile(email, token) {
-  const response = await fetch(`http://localhost:8080/api/athlete/profile?email=${email}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch profile: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-
-  // Populate profile fields
-  document.getElementById("profile-image").src = `data:image/png;base64,${data.imageLink}`;
-  document.getElementById("profile-name").textContent = data.name;
-  document.getElementById("email").textContent = email;
-  document.getElementById("dob").textContent = data.birthDate || "N/A";
-  document.getElementById("gender").textContent = data.gender || "N/A";
-  document.getElementById("height").textContent = `${data.height || "N/A"}`;
-  document.getElementById("weight").textContent = `${data.weight || "N/A"}`;
-  document.getElementById("category").textContent = data.category || "N/A";
-
-  // Pre-fill edit form fields
-  document.getElementById("edit-name").value = data.name;
-  document.getElementById("edit-dob").value = data.birthDate;
-  document.getElementById("edit-gender").value = data.gender;
-  document.getElementById("edit-height").value = data.height;
-  document.getElementById("edit-weight").value = data.weight;
-  document.getElementById("edit-category").value = data.category;
-}
-
-// Fetch and display coach information
-async function fetchAndDisplayCoachInfo(athleteId, token) {
-  const assistanceResponse = await fetch(`http://localhost:8080/api/assistance/search?athleteId=${athleteId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!assistanceResponse.ok) {
-    throw new Error(`Failed to fetch assistance status: ${assistanceResponse.statusText}`);
-  }
-
-  const assistanceData = await assistanceResponse.json();
-  let coachNames = [];
-
-  if (Array.isArray(assistanceData)) {
-    for (const assistance of assistanceData) {
-      if (assistance.status === "ACCEPTED" && assistance.coachId) {
-        const coachName = await fetchCoachName(assistance.coachId, token);
-        if (coachName) {
-          coachNames.push(coachName);
+        if (!email || !token || !athleteId)
+        {
+            alert("Session expired. Please log in again.");
+            window.location.href = "Login.html";
+            return;
         }
-      }
+
+        // Fetch profile safely
+        try
+        {
+            await fetchAndPopulateProfile(email, token);
+        }
+        catch (error)
+        {
+            console.error("Profile Fetch Error:", error);
+            alert("Error fetching profile.");
+        }
+
+        // Fetch coach separately (no alert)
+        try
+        {
+            await fetchAndDisplayCoachInfo(athleteId, token);
+        }
+        catch (error)
+        {
+            console.error("Coach Fetch Error:", error);
+            document.getElementById("coach").textContent = "N/A";
+        }
     }
-  }
 
-  // Update the coach field in the profile
-  document.getElementById("coach").textContent = coachNames.length > 0
-    ? coachNames.join(", ")
-    : "N/A";
-}
-
-// Fetch coach name by coach ID
-async function fetchCoachName(coachId, token) {
-  const coachResponse = await fetch(`http://localhost:8080/api/coach/search?id=${coachId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (coachResponse.ok) {
-    const coachData = await coachResponse.json();
-    return coachData.name || null;
-  }
-  return null;
-}
-
-// Save profile updates
-
-    async function saveProfile() {
-      const email = localStorage.getItem("email");
-      const token = localStorage.getItem("token");
-
-      if (!email || !token) {
-        alert("Session expired. Please log in again.");
-        window.location.href = 'Login.html';
-        return;
-      }
-
-      const updatedData = {
-        name: document.getElementById("edit-name").value,
-        birthDate: document.getElementById("edit-dob").value,
-        gender: document.getElementById("edit-gender").value,
-        height: document.getElementById("edit-height").value,
-        weight: document.getElementById("edit-weight").value,
-        category: document.getElementById("edit-category").value,
-      };
-
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("AthleteDTO", JSON.stringify(updatedData));
-
-      const imageInput = document.getElementById("edit-image");
-      if (imageInput.files.length > 0) {
-        formData.append("imageLink", imageInput.files[0]);
-      }
-
-      try {
-        const response = await fetch("http://localhost:8080/api/athlete/profile", {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
+    /* =========================
+       Fetch Profile Data
+    ========================= */
+    async function fetchAndPopulateProfile(email, token)
+    {
+        const response = await fetch(`http://localhost:8080/api/athlete/profile?email=${email}`,
+        {
+            method: "GET",
+            headers:
+            {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
         });
 
-        if (!response.ok) {
-          throw new Error(`Failed to update profile: ${response.statusText}`);
+        if (!response.ok)
+        {
+            throw new Error(`Profile API Error: ${response.status}`);
         }
 
-        alert("Profile updated successfully.");
-        fetchProfile(); // Refresh profile data
-        editProfile(); // Hide edit form
-      } catch (error) {
-        console.error(error);
-        alert("Error saving profile. Please try again.");
-      }
+        const data = await response.json();
+
+        document.getElementById("profile-image").src =
+            data.imageLink
+                ? `data:image/png;base64,${data.imageLink}`
+                : "images/user.png";
+
+        document.getElementById("profile-name").textContent = data.name || "N/A";
+        document.getElementById("email").textContent = email;
+        document.getElementById("dob").textContent = data.birthDate || "N/A";
+        document.getElementById("gender").textContent = data.gender || "N/A";
+        document.getElementById("height").textContent = data.height || "N/A";
+        document.getElementById("weight").textContent = data.weight || "N/A";
+        document.getElementById("category").textContent = data.category || "N/A";
+
+        // Prefill edit form
+        document.getElementById("edit-name").value = data.name || "";
+        document.getElementById("edit-dob").value = data.birthDate || "";
+        document.getElementById("edit-gender").value = data.gender || "";
+        document.getElementById("edit-height").value = data.height || "";
+        document.getElementById("edit-weight").value = data.weight || "";
+        document.getElementById("edit-category").value = data.category || "";
     }
 
-    // Cancel editing and reset form
-    function cancelEdit() {
-      document.getElementById("edit-form").reset();
-      fetchProfile(); // Refresh profile data
-      editProfile(); // Hide edit form
+    /* =========================
+       Fetch Coach Info
+    ========================= */
+    async function fetchAndDisplayCoachInfo(athleteId, token)
+    {
+        const response = await fetch(
+            `http://localhost:8080/api/assistance/search?athleteId=${athleteId}`,
+            {
+                method: "GET",
+                headers:
+                {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        if (!response.ok)
+        {
+            console.warn("No coach data found");
+            document.getElementById("coach").textContent = "N/A";
+            return;
+        }
+
+        const assistanceData = await response.json();
+
+        if (!Array.isArray(assistanceData) || assistanceData.length === 0)
+        {
+            document.getElementById("coach").textContent = "N/A";
+            return;
+        }
+
+        let coachNames = [];
+
+        for (const assistance of assistanceData)
+        {
+            if (assistance.status === "ACCEPTED" && assistance.coachId)
+            {
+                const coachName = await fetchCoachName(assistance.coachId, token);
+                if (coachName)
+                {
+                    coachNames.push(coachName);
+                }
+            }
+        }
+
+        document.getElementById("coach").textContent =
+            coachNames.length > 0 ? coachNames.join(", ") : "N/A";
     }
 
-    // Ensure edit form is hidden initially
-    document.querySelector(".edit-form-container").style.display = "none";
+    /* =========================
+       Fetch Coach Name
+    ========================= */
+    async function fetchCoachName(coachId, token)
+    {
+        try
+        {
+            const response = await fetch(
+                `http://localhost:8080/api/coach/search?id=${coachId}`,
+                {
+                    method: "GET",
+                    headers:
+                    {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
 
-    // Initial call to fetch profile when the page loads
-    window.onload = fetchProfile;
+            if (!response.ok)
+            {
+                return null;
+            }
 
-    // Add event listener for logout button
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoutButton = document.getElementById("logout-button");
-      if (logoutButton) {
-        logoutButton.addEventListener("click", logout);
-      }
+            const data = await response.json();
+            return data.name || null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /* =========================
+       Save Profile
+    ========================= */
+    async function saveProfile()
+    {
+        const email = localStorage.getItem("email");
+        const token = localStorage.getItem("token");
+
+        if (!email || !token)
+        {
+            alert("Session expired. Please log in again.");
+            window.location.href = "Login.html";
+            return;
+        }
+
+        const updatedData =
+        {
+            name: document.getElementById("edit-name").value,
+            birthDate: document.getElementById("edit-dob").value,
+            gender: document.getElementById("edit-gender").value,
+            height: document.getElementById("edit-height").value,
+            weight: document.getElementById("edit-weight").value,
+            category: document.getElementById("edit-category").value,
+        };
+
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("AthleteDTO", JSON.stringify(updatedData));
+
+        const imageInput = document.getElementById("edit-image");
+        if (imageInput.files.length > 0)
+        {
+            formData.append("imageLink", imageInput.files[0]);
+        }
+
+        try
+        {
+            const response = await fetch("http://localhost:8080/api/athlete/profile",
+            {
+                method: "PUT",
+                headers:
+                {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            if (!response.ok)
+            {
+                throw new Error("Update failed");
+            }
+
+            alert("Profile updated successfully.");
+            await fetchProfile();
+            editProfile();
+        }
+        catch (error)
+        {
+            console.error("Update Error:", error);
+            alert("Error saving profile.");
+        }
+    }
+
+    /* =========================
+       Cancel Edit
+    ========================= */
+    function cancelEdit()
+    {
+        document.getElementById("edit-form").reset();
+        fetchProfile();
+        editProfile();
+    }
+
+    /* =========================
+       Init
+    ========================= */
+    document.addEventListener("DOMContentLoaded", () =>
+    {
+        document.querySelector(".edit-form-container").style.display = "none";
+
+        fetchProfile();
+
+        const logoutButton = document.getElementById("logout-button");
+        if (logoutButton)
+        {
+            logoutButton.addEventListener("click", logout);
+        }
     });
 </script>
 </body>
