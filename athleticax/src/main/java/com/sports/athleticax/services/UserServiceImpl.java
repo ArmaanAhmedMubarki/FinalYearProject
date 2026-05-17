@@ -101,5 +101,21 @@ public class UserServiceImpl implements UserService {
         // Return the user if authentication is successful
         return user;
     }
+    @Override
+    public boolean emailExists(String email) {
+    return userRepository.findByEmail(email) != null;
+    }
+    @Override
+    public void updatePassword(String email, String newPassword) {
 
+    User user = userRepository.findByEmail(email);
+
+    if (user == null) {
+        throw new ApiException("User not found");
+    }
+
+    user.setPassword(passwordEncoder.encode(newPassword));
+
+    userRepository.save(user);
+    }
 }

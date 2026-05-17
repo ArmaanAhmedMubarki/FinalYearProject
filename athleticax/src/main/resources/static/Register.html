@@ -262,103 +262,51 @@
 </footer>
 <script>
     const registerForm = document.getElementById('registerForm');
-    const popup = document.getElementById("popup-message");
-    const popupText = document.getElementById("popup-text");
-    const okPopup = document.getElementById("ok-popup");
 
-    // Helper function to display validation messages
-    function setValidationMessage(input, message) {
-        input.setCustomValidity(message);
-        input.reportValidity();
+    registerForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const role = document.getElementById('role').value;
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
     }
 
-    // Add input-specific validation
-    registerForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+    const userData = {
+        name,
+        email,
+        password,
+        role
+    };
 
-        let valid = true;
+    // Save temporarily for OTP page
+    sessionStorage.setItem("registerData", JSON.stringify(userData));
 
-        // Full Name validation
-        const nameInput = document.getElementById('name');
-        if (nameInput.value.trim().length < 4) {
-            setValidationMessage(nameInput, 'Full Name must be at least 4 characters long.');
-            valid = false;
-        } else {
-            setValidationMessage(nameInput, '');
-        }
+    // STEP 1: SEND OTP
+    fetch("http://localhost:8080/api/auth/send-otp", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("OTP sending failed");
 
-        // Email validation
-        const emailInput = document.getElementById('email');
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailInput.value.trim())) {
-            setValidationMessage(emailInput, 'Email must have an "@" followed by domain extension (Eg : john@gmail.com)');
-            valid = false;
-        } else {
-            setValidationMessage(emailInput, '');
-        }
+        alert("OTP sent to your email");
 
-        // Password validation
-        const passwordInput = document.getElementById('password');
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\d)[A-Za-z\d!@#$%^&*]{4,}$/;
-        if (!passwordRegex.test(passwordInput.value.trim())) {
-            setValidationMessage(passwordInput, 'Password must have an uppercase, lowercase, digit, and special character (e.g., John@123).');
-            valid = false;
-        } else {
-            setValidationMessage(passwordInput, '');
-        }
-
-        // Confirm Password validation
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        if (confirmPasswordInput.value.trim() !== passwordInput.value.trim()) {
-            setValidationMessage(confirmPasswordInput, 'Passwords do not match.');
-            valid = false;
-        } else {
-            setValidationMessage(confirmPasswordInput, '');
-        }
-
-        // Role validation
-        const roleInput = document.getElementById('role');
-        if (!roleInput.value.trim()) {
-            setValidationMessage(roleInput, 'Please select a role.');
-            valid = false;
-        } else {
-            setValidationMessage(roleInput, '');
-        }
-
-        // Submit if valid
-        if (valid) {
-            fetch('http://localhost:8080/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: nameInput.value,
-                    email: emailInput.value,
-                    password: passwordInput.value,
-                    role: roleInput.value,
-                }),
-            })
-                .then((response) => {
-                    if (response.ok) {
-                        // Display the success message in the popup
-                        popupText.textContent = "Registration successful! Please log in.";
-                        popup.classList.remove("hidden");
-                        document.body.classList.add("popup-active");
-                    } else {
-                        alert('Registration failed. Please try again.');
-                    }
-                })
-                .catch(() => {
-                    alert('An error occurred. Please try again later.');
-                });
-        }
+        // Redirect to OTP page
+        window.location.href = "OTP.html";
+    })
+    .catch(err => {
+        alert(err.message);
     });
-
-    // Redirect to login page when "Ok" button is clicked
-    okPopup.addEventListener("click", function () {
-        window.location.href = 'Login.html';
-    });
+});
 </script>
 </body>
 </html>

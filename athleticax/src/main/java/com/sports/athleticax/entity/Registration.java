@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "registrations")
-public class Registration{
+public class Registration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,9 +14,17 @@ public class Registration{
 
     private Long eventId;
 
-    private String registrationDate; // Stored as String to match the database schema
+    private String registrationDate;
 
     private String status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getAthleteId() {
         return athleteId;
@@ -32,14 +40,6 @@ public class Registration{
 
     public void setEventId(Long eventId) {
         this.eventId = eventId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getRegistrationDate() {
