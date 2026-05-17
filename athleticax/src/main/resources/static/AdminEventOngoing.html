@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Ongoing Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Reset body and html */
+       body, html {
+           margin: 0;
+           padding: 0;
+           min-height: 100vh;
+           display: flex;
+           flex-direction: column;
+           font-family: Arial, sans-serif;
+       }
+
+       /* Navbar styles */
+       .navbar {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           background-color: #4A148C;
+           padding: 0 20px;
+           height: 70px; /* Consistent height */
+           color: #fff;
+           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+           font-size: 1rem; /* Consistent text size */
+       }
+
+       .navbar .logo {
+           font-size: 1.5rem;
+           font-weight: bold;
+           color: #f9a826;
+           text-transform: uppercase;
+       }
+
+       .navbar ul {
+           list-style: none;
+           display: flex;
+           gap: 20px;
+           margin: 0;
+       }
+
+       .navbar ul li {
+           display: inline;
+       }
+
+       .navbar ul li a {
+           text-decoration: none;
+           color: #fff;
+           font-size: 1rem;
+           transition: color 0.3s ease, background-color 0.3s ease;
+           padding: 10px 15px;
+           border-radius: 5px;
+       }
+
+       .navbar ul li a:hover {
+           background-color: #6A1B9A;
+           color: #f9a826;
+       }
+
+       // main section for cards
+
+       .events-container {
+           display: flex;
+           flex-wrap: wrap;
+           gap: 20px;
+           justify-content: center;
+       }
+       .event-card {
+           border: 1px solid #ccc;
+           border-radius: 8px;
+           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+           padding: 16px;
+           text-align: center;
+           max-width: 293px;
+           margin: 10px;
+       }
+       .event-image {
+           max-width: 100%;
+           border-radius: 8px;
+       }
+
+       .card {
+           height: 100%;
+        }
+        .section-title {
+           font-size: 2.8rem;
+           color: #444;
+           text-align: center;
+           margin-bottom: 40px;
+           text-transform: uppercase;
+           letter-spacing: 1.5px;
+           animation: fadeInDown 1s ease;
+          }
+
+        #main-section {
+           flex: 1; /* Ensures it grows to fill space between header and footer */
+           padding: 20px;
+           margin: 20px auto;
+           padding: 20px;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #4A148C;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .btn{
+             background-color: #4A148C;
+             color: white;
+         }
+         .btn:hover {
+             background-color: #6A1B9A;
+             color: #f9a826;
+         }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">ADMIN</div>
+    <ul>
+        <li><a href="AdminHome.html">Home</a></li>
+        <li><a href="AdminEvent.html">Events</a></li>
+        <li><a href="CoachesForAdmin.html">Coaches</a></li>
+        <li><a href="AthletesForAdmin.html">Athlete</a></li>
+        <li><a href="AdminResult.html">Results</a></li>
+        <li><a href="AdminNews.html">News</a></li>
+        <li><a href="AdminProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container mt-5" id="main-section">
+    <h1 class="section-title">Ongoing Events</h1>
+    <div class="text-center" id="loading">Loading events...</div>
+    <div class="container">
+        <div class="row g-3" id="events-container"></div>
+    </div>
+</div>
+
+<!-- Registered Athletes Modal -->
+<div aria-hidden="true" aria-labelledby="registeredAthletesModalLabel" class="modal fade" id="registeredAthletesModal"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registeredAthletesModalLabel">Registered Athletes</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Height (cm)</th>
+                        <th>Weight (kg)</th>
+                        <th>Gender</th>
+                    </tr>
+                    </thead>
+                    <tbody id="athletesTableBody">
+                    <!-- Athlete rows will be appended dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script src="TokenCheck.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    const registeredAthletesModal = new bootstrap.Modal(document.getElementById('registeredAthletesModal'));
+    const athletesTableBody = document.getElementById('athletesTableBody');
+
+    // Helper function to format the current date
+
+     function getTodayDate() {
+         const today = new Date();
+         return today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+     }
+
+     // Fetch events data
+
+     async function fetchEvents() {
+         const loadingElement = document.getElementById('loading');
+         const eventsContainer = document.getElementById('events-container');
+         const token = localStorage.getItem('token'); // Retrieve token from local storage
+
+         try {
+             const response = await fetch('http://localhost:8080/api/events', {
+                 method: 'GET',
+                 headers: {
+                     'Authorization': `Bearer ${token}`
+                 }
+             });
+
+             const data = await response.json();
+             const today = getTodayDate();
+             const filteredEvents = data.filter(event => event.eventDate === today);
+
+             if (filteredEvents.length === 0) {
+                 loadingElement.innerText = 'No events today!';
+                 return;
+             }
+
+             loadingElement.classList.add('d-none');
+             eventsContainer.classList.remove('d-none');
+
+             filteredEvents.forEach(event => {
+                 const eventCard = document.createElement('div');
+                 eventCard.className = 'event-card';
+
+                 eventCard.innerHTML = `
+                     <img src="data:image/jpeg;base64,${event.imageLink}" alt="${event.eventName}" class="event-image">
+                     <h3>${event.eventName}</h3>
+                     <p><strong>Category:</strong> ${event.category}</p>
+                     <p><strong>Date:</strong> ${event.eventDate}</p>
+                     <p><strong>Meet:</strong> ${event.meetName}</p>
+                     <p><strong>Location:</strong> ${event.location}</p>
+                     <button class="btn me-2" onclick="showRegisteredAthletes(${event.id})">Registrations</button>
+                 `;
+
+                 eventsContainer.appendChild(eventCard);
+             });
+         } catch (error) {
+             loadingElement.innerText = 'Error fetching events.';
+             console.error('Error fetching events:', error);
+         }
+     }
+
+     async function showRegisteredAthletes(eventId) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const registrations = response.data;
+        const approvedAthletes = registrations.filter(reg => reg.status === 'APPROVED');
+
+        // Clear table content before populating new data
+        athletesTableBody.innerHTML = '';
+
+        if (approvedAthletes.length === 0) {
+            // Show message if no athletes are registered
+            const row = `<tr>
+                <td colspan="5" class="text-center">No athletes have registered for this event</td>
+            </tr>`;
+            athletesTableBody.insertAdjacentHTML('beforeend', row);
+        }
+
+        for (const reg of approvedAthletes) {
+            const athleteResponse = await axios.get(`http://localhost:8080/api/athlete/profile/search?id=${reg.athleteId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const athlete = athleteResponse.data;
+            const age = calculateAge(athlete.birthDate);
+
+            const row = `<tr>
+                <td>${athlete.name}</td>
+                <td>${age}</td>
+                <td>${athlete.height}</td>
+                <td>${athlete.weight}</td>
+                <td>${athlete.gender}</td>
+            </tr>`;
+            athletesTableBody.insertAdjacentHTML('beforeend', row);
+        }
+
+        // Show modal
+        registeredAthletesModal.show();
+    } catch (error) {
+        console.error('Error fetching registered athletes:', error);
+    }
+}
+
+         // Calculate age
+    function calculateAge(birthDate) {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    return age;
+   }
+
+// Handle modal close event
+document.getElementById('registeredAthletesModal').addEventListener('hidden.bs.modal', () => {
+    // Clear the table data when the modal is closed
+    athletesTableBody.innerHTML = '';
+});
+
+     // Load events on page load
+
+     document.addEventListener('DOMContentLoaded', fetchEvents);
+</script>
+</body>
+</html>
