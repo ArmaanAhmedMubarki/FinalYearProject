@@ -36,9 +36,14 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email already registered");
         }
 
-        otpService.sendOtp(request.getEmail());
-
-        return ResponseEntity.ok("OTP sent successfully");
+        // Wrap the service call in a try-catch block to handle mail failures gracefully
+        try {
+            otpService.sendOtp(request.getEmail());
+            return ResponseEntity.ok("OTP sent successfully");
+        } catch (RuntimeException e) {
+            // Returns an HTTP 400 or 500 with the exact error string instead of a blank crash
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
     // ✅ RESEND OTP

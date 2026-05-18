@@ -42,6 +42,7 @@ public class OtpService {
         // ✅ SEND EMAIL
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("finalyearproject.noreply@gmail.com");
             message.setTo(email);
             message.setSubject("AthleticaX OTP Verification");
             message.setText("Your OTP is: " + otp + "\nValid for 5 minutes.");
