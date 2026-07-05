@@ -1,10 +1,13 @@
 package com.sports.athleticax.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class RegistrationDTO {
 
     private Long id;
     private Long athleteId;
     private Long eventId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private String registrationDate; // Stored as String
     private String status;
 

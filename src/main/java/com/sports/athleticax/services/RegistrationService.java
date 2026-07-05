@@ -1,7 +1,10 @@
 package com.sports.athleticax.services;
 
 import com.sports.athleticax.dto.RegistrationDTO;
+import com.sports.athleticax.dto.EligibilityResultDTO;
 import com.sports.athleticax.entity.Registration;
+import com.sports.athleticax.entity.Athlete;
+import com.sports.athleticax.entity.Event;
 import com.sports.athleticax.repository.RegistrationRepository;
 import com.sports.athleticax.repository.AthleteRepository;
 import com.sports.athleticax.repository.EventRepository;
@@ -11,10 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 @Service
-public class RegistrationService {
-
+public class RegistrationService
+{
     @Autowired
     private RegistrationRepository registrationRepository;
 
@@ -23,6 +27,9 @@ public class RegistrationService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private RegistrationRulesEngineService rulesEngineService;
 
     // ===================== NORMAL FLOW ONLY =====================
 
@@ -50,7 +57,7 @@ public class RegistrationService {
         registration.setAthleteId(dto.getAthleteId());
         registration.setEventId(dto.getEventId());
         registration.setRegistrationDate(dto.getRegistrationDate());
-        registration.setStatus("CONFIRMED");
+        registration.setStatus("PENDING");
 
         registrationRepository.save(registration);
     }
@@ -80,7 +87,62 @@ public class RegistrationService {
         return registrationRepository.findByAthleteId(athleteId);
     }
 
-    public List<Registration> findByEventId(Long eventId) {
+    public List<Registration> findByEventId(Long eventId)
+    {
         return registrationRepository.findByEventId(eventId);
+    }
+
+    public List<EligibilityResultDTO> getEligibleCandidates(Long eventId)
+    {
+        List<EligibilityResultDTO> results = new ArrayList<>();
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        List<Registration> registrations = registrationRepository.findByEventId(eventId);
+
+        for (Registration registration : registrations)
+        {
+            try
+            {
+                Athlete athlete = athleteRepository.findById(registration.getAthleteId())
+                        .orElseThrow(() -> new RuntimeException("Athlete not found"));
+
+                EligibilityResultDTO eligibility = rulesEngineService.calculateEligibility(athlete, event);
+
+                try
+                {
+                    if (athlete.getUser() != null && athlete.getUser().getName() != null)
+                    {
+                        eligibility.setAthleteName(athlete.getUser().getName());
+                    }
+                    else
+                    {
+                        eligibility.setAthleteName("Unknown");
+                    }
+                }
+                catch (Exception e)
+                {
+                    eligibility.setAthleteName("Unknown");
+                }
+
+                registration.setEligibilityStatus(eligibility.getEligibilityStatus());
+                registration.setRejectionReason(eligibility.getRejectionReason());
+                registrationRepository.save(registration);
+
+                eligibility.setApprovalStatus(registration.getStatus());
+                eligibility.setRegistrationId(registration.getId());
+
+                results.add(eligibility);
+            }
+            catch (Exception e)
+            {
+                System.err.println("Error processing registration " + registration.getId() + ": " + e.getMessage());
+                e.printStackTrace();
+                continue;
+            }
+        }
+
+        return results;
     }
 }

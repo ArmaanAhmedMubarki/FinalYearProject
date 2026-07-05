@@ -9,9 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.sports.athleticax.dto.EligibilityResultDTO;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/registration")
@@ -76,22 +78,71 @@ public class RegistrationController {
     @GetMapping("/search")
     public ResponseEntity<?> getRegistration(
             @RequestParam(required = false) Long eventId,
-            @RequestParam(required = false) Long athleteId) {
-
-        if (eventId != null && athleteId != null) {
-            // Search by both eventId and athleteId
+            @RequestParam(required = false) Long athleteId)
+    {
+        if (eventId != null && athleteId != null)
+        {
             Optional<Registration> registration = registrationService.findByEventIdAndAthleteId(eventId, athleteId);
             return registration.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-        } else if (eventId != null) {
-            // Search by eventId only
+        }
+        else if (eventId != null)
+        {
             List<Registration> registrations = registrationService.findByEventId(eventId);
             return ResponseEntity.ok(registrations);
-        } else if (athleteId != null) {
-            // Search by athleteId only
+        }
+        else if (athleteId != null)
+        {
             List<Registration> registrations = registrationService.findByAthleteId(athleteId);
             return ResponseEntity.ok(registrations);
-        } else {
+        }
+        else
+        {
             return ResponseEntity.badRequest().body("Either eventId or athleteId must be provided.");
+        }
+    }
+
+    @GetMapping("/eligible-candidates")
+    public ResponseEntity<?> getEligibleCandidates(@RequestParam Long eventId)
+    {
+        try
+        {
+            List<EligibilityResultDTO> candidates = registrationService.getEligibleCandidates(eventId);
+            return ResponseEntity.ok(candidates);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/bulk-update")
+    public ResponseEntity<?> bulkUpdateRegistration(@RequestBody Map<String, Object> request)
+    {
+        try
+        {
+            List<Long> registrationIds = (List<Long>) request.get("registrationIds");
+            String status = (String) request.get("status");
+
+            if (registrationIds == null || registrationIds.isEmpty())
+            {
+                return ResponseEntity.badRequest().body("No registrations selected");
+            }
+
+            if (status == null || status.isEmpty())
+            {
+                return ResponseEntity.badRequest().body("Status is required");
+            }
+
+            for (Long id : registrationIds)
+            {
+                registrationService.updateRegistration(id, status);
+            }
+
+            return ResponseEntity.ok("Bulk update successful for " + registrationIds.size() + " registrations");
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 }

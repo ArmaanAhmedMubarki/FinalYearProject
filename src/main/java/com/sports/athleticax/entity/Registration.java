@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "registrations")
-public class Registration {
-
+public class Registration
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,6 +17,13 @@ public class Registration {
     private String registrationDate;
 
     private String status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private EligibilityStatus eligibilityStatus;
+
+    @Column(nullable = true, length = 500)
+    private String rejectionReason;
 
     public Long getId() {
         return id;
@@ -54,7 +61,28 @@ public class Registration {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String status)
+    {
         this.status = status;
+    }
+
+    public EligibilityStatus getEligibilityStatus()
+    {
+        return eligibilityStatus;
+    }
+
+    public void setEligibilityStatus(EligibilityStatus eligibilityStatus)
+    {
+        this.eligibilityStatus = eligibilityStatus;
+    }
+
+    public String getRejectionReason()
+    {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason)
+    {
+        this.rejectionReason = rejectionReason;
     }
 }
