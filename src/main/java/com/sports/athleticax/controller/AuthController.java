@@ -9,6 +9,7 @@ import com.sports.athleticax.services.UserService;
 import com.sports.athleticax.dto.*;
 import com.sports.athleticax.entity.*;
 import com.sports.athleticax.security.JwtTokenProvider;
+import com.sports.athleticax.repository.AdminRepository;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,6 +23,9 @@ public class AuthController {
 
     @Autowired
     private OtpService otpService;
+
+    @Autowired
+    private AdminRepository adminRepository;
 
     // ================= OTP =================
 
@@ -61,6 +65,17 @@ public class AuthController {
         otpService.sendOtp(request.getEmail());
 
         return ResponseEntity.ok("OTP resent successfully");
+    }
+
+    // ✅ CHECK IF ADMIN EXISTS
+    @GetMapping("/check-admin-exists")
+    public ResponseEntity<?> checkAdminExists() {
+        boolean adminExists = !adminRepository.findAll().isEmpty();
+        return ResponseEntity.ok(new java.util.HashMap<String, Boolean>() {
+            {
+                put("adminExists", adminExists);
+            }
+        });
     }
 
     @PostMapping("/register-with-otp")
