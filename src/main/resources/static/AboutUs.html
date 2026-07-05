@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - AthleticaX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #fcfcfc;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4A148C;
+            padding: 0 20px;
+            height: 70px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+        }
+
+        .navbar .logo {
+            font-size: 2.0rem;
+            font-weight: bold;
+            color: #f9a826;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #4A148C;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .content {
+            margin: auto;
+            padding: 20px 20px;
+            max-width: 1400px;
+            text-align: center;
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .mission-text {
+            text-align: center;
+            max-width: 100%;
+            margin: 0 auto 15px auto;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        /* --- MENTOR SECTION STYLES --- */
+        .mentor-section {
+            margin-top: 20px;
+        }
+
+        .mentor-section h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .mentor-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 5px solid #4A148C;
+            padding: 20px;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .mentor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            background-color: #f3e5f5;
+        }
+
+        .mentor-card h3 {
+            font-size: 1.5rem;
+            color: #4A148C;
+            margin-bottom: 5px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .mentor-card h3:hover {
+            color: #f9a826;
+            cursor: pointer;
+        }
+
+        .mentor-card p {
+            font-size: 1.05rem;
+            color: #555;
+            text-align: center !important;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* --- TEAM SECTION STYLES --- */
+        .team {
+            margin-top: 35px;
+        }
+
+        .team h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 5px;
+        }
+
+        .team-member {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 5px solid #f9a826;
+            padding: 20px 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            background-color: #fffaf4;
+        }
+
+        .team-member h3 {
+            font-size: 1.3rem;
+            color: #f9a826;
+            margin-bottom: 5px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .team-member h3:hover {
+            color: #4A148C;
+            cursor: pointer;
+        }
+
+        .team-member h4 {
+            font-size: 0.9rem;
+            color: #4A148C;
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .team-member p {
+            font-size: 0.95rem;
+            color: #555;
+            text-align: center !important;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 992px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">AthleticaX</div>
+    <ul>
+        <li><a href="Welcome.html">Home</a></li>
+        <li><a href="PublicEvent.html">Events</a></li>
+        <li><a href="PublicNews.html">News</a></li>
+        <li><a href="Login.html">Login</a></li>
+        <li><a href="Register.html">Sign Up</a></li>
+    </ul>
+</nav>
+
+<div class="content">
+    <h1>About AthleticaX</h1>
+
+    <p class="mission-text">
+        Welcome to AthleticaX! We recognized a significant bottleneck in our college's sports management: event creation, athlete registration, shortlisting, and result publication rely heavily on slow, error-prone manual paperwork and scattered spreadsheets. To solve this, final-year Computer Science and Engineering students at St. Thomas' College of Engineering and Technology, under the expert guidance of Prof. Suparna Dutta, developed AthleticaX. Our secure, role-based platform digitizes the entire sports lifecycle—from preventing duplicate entries to automating eligibility checks—bringing efficiency, transparency, and a centralized source of truth to sports event management.
+    </p>
+
+    <div class="mentor-section">
+        <h2>Project Mentor</h2>
+        <div class="mentor-card">
+            <h3>Prof. Suparna Dutta</h3>
+            <p>Providing expert technical mentorship, strategic insights, and invaluable support throughout the entire AthleticaX development lifecycle.</p>
+        </div>
+    </div>
+
+    <div class="team">
+        <h2>Meet the Developers</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <h3>Armaan Ahmed Mubarki</h3>
+                <h4>Lead Architect</h4>
+                <p>Engineered the core platform architecture, developed the full-stack role-based portals, and implemented the automated eligibility rules engine.</p>
+            </div>
+            <div class="team-member">
+                <h3>Aneesh Das</h3>
+                <h4>Security & ML</h4>
+                <p>Implemented the OTP email verification and authentication workflows, and spearheaded R&D for predictive machine learning models.</p>
+            </div>
+            <div class="team-member">
+                <h3>Faizan Parwez</h3>
+                <h4>Data Research</h4>
+                <p>Researched external sports datasets and developed baseline machine learning models for upcoming platform updates.</p>
+            </div>
+            <div class="team-member">
+                <h3>Md Shahbaaz Shakeel</h3>
+                <h4>Quality Assurance</h4>
+                <p>Conducting pre-deployment functional testing and user experience verification across the platform's role-based portals.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 AthleticaX Platform. All rights reserved.</p>
+</footer>
+</body>
+</html>

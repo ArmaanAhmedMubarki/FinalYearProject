@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Know More - AthleticaX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #fcfcfc;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4A148C;
+            padding: 0 20px;
+            height: 70px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+        }
+
+        .navbar .logo {
+            font-size: 2.0rem;
+            font-weight: bold;
+            color: #f9a826;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0; /* Reduced padding */
+            background-color: #4A148C;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .content {
+            margin: auto;
+            padding: 20px 20px; /* Reduced vertical padding */
+            max-width: 1400px; /* Widened significantly */
+            text-align: center;
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px; /* Tightened */
+            margin-top: 10px; /* Tightened */
+            color: #333;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            margin: 0 auto 25px auto; /* Reduced bottom margin */
+            line-height: 1.5; /* Tightened line height */
+            color: #555;
+            text-align: center;
+            max-width: 100%; /* Removed restriction so text spans wider */
+        }
+
+        /* --- FEATURE GRID UPDATES --- */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; /* Reduced gap */
+            padding: 5px;
+        }
+
+        .feature-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 5px solid #f9a826;
+            padding: 20px 15px; /* Reduced inside padding */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            background-color: #fffaf4;
+        }
+
+        .feature-card i {
+            font-size: 2.2rem; /* Slightly smaller icon */
+            color: #4A148C;
+            background-color: #f3e5f5;
+            width: 70px; /* Scaled down slightly */
+            height: 70px;
+            line-height: 70px;
+            border-radius: 50%;
+            margin-bottom: 15px; /* Tightened */
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem; /* Slightly smaller heading */
+            color: #f9a826;
+            margin-bottom: 10px; /* Tightened */
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .feature-card h3:hover {
+            color: #4A148C;
+            cursor: pointer;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #555;
+            text-align: center !important;
+            margin: 0;
+            line-height: 1.4; /* Tightened line height */
+        }
+
+        @media (max-width: 992px) {
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">AthleticaX</div>
+    <ul>
+        <li><a href="Welcome.html">Home</a></li>
+        <li><a href="PublicEvent.html">Events</a></li>
+        <li><a href="PublicNews.html">News</a></li>
+        <li><a href="Login.html">Login</a></li>
+        <li><a href="Register.html">Sign Up</a></li>
+    </ul>
+</nav>
+
+<div class="content">
+    <h1>Welcome to AthleticaX</h1>
+    <p class="intro-text">
+        AthleticaX automates the entire sports lifecycle—from eligibility rules to result publishing—securely and at scale. Here is how our three-tier, role-based platform empowers athletes, coaches, and administrators:
+    </p>
+
+    <div class="features">
+        <div class="feature-card">
+            <i class="fas fa-check-double"></i>
+            <h3>Automated Eligibility</h3>
+            <p>Say goodbye to manual checks. Our decoupled rules engine automatically evaluates age, gender, weight, and height to classify registrations as auto-qualified, review-needed, or ineligible.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-users"></i>
+            <h3>Coach–Athlete Workflow</h3>
+            <p>Athletes can directly request coaching assistance through their portal. Coaches can manage their profiles, accept or reject requests, and mentor their assigned athletes effectively.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>Unified Event Lifecycle</h3>
+            <p>Administrators govern a streamlined lifecycle. Create meets, define custom eligibility criteria per event, and seamlessly transition events from Upcoming to Ongoing to Completed.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-list-ol"></i>
+            <h3>Bulk Short-Listing</h3>
+            <p>Admins can efficiently process bulk short-listing of qualified candidates and instantly publish transparent, online results accessible to both athletes and coaches.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Defense-in-Depth Security</h3>
+            <p>Your data is protected by a robust security baseline featuring stateless JWT sessions, OTP-verified e-mail sign-ups, BCrypt password hashing, and strict role-based access.</p>
+        </div>
+
+        <div class="feature-card">
+            <i class="fas fa-desktop"></i>
+            <h3>Role-Specific Portals</h3>
+            <p>Experience an intuitive, responsive interface built with HTML5, Bootstrap 5.3, and JS. Each role (Admin, Athlete, Coach) gets a dedicated portal showing only the data they need.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 AthleticaX Platform. All rights reserved.</p>
+</footer>
+</body>
+</html>
