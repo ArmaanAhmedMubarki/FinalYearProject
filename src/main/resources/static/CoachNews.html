@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    /* Reset body and html */
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+	    font-family: Arial, sans-serif;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4A148C;
+            padding: 0 20px;
+            height: 70px; /* Consistent height */
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1rem; /* Consistent text size */
+        }
+
+        .navbar .logo {
+            font-size: 2.0rem;
+            font-weight: bold;
+            color: #f9a826;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+        }
+
+        .navbar ul li {
+            display: inline;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+    /* News Container */
+    .news-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+        justify-content: center;
+        margin-top: 80px;
+        flex: 1;
+    }
+
+    .news-card {
+        width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+
+    .news-card:hover {
+        transform: scale(1.05);
+    }
+
+    .news-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .news-card .content {
+        padding: 15px;
+    }
+
+    .news-card h3 {
+        font-size: 18px;
+        margin: 0 0 10px;
+        color: #333;
+    }
+
+    .news-card p {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .news-card a {
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: none;
+        color: #f9a826;
+        font-weight: bold;
+    }
+
+    .news-card a:hover {
+        text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #333;
+        color: #fff;
+        width: 100%;
+        margin-top: 24.5%;
+        /* Ensures footer sticks at the bottom */
+    }
+
+    footer p {
+        font-size: 0.9rem;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #f9a826;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        margin: 50px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="logo">Coach</div>
+  <ul>
+    <li><a href="CoachHome.html">Home</a></li>
+    <li><a href="CoachEvent.html">Events</a></li>
+    <li><a href="AthletesForCoach.html">Athletes</a></li>
+    <li><a href="CoachResult.html">Results</a></li>
+    <li><a href="CoachNews.html">News</a></li>
+    <li><a href="CoachProfile.html">Profile</a></li>
+    <li><a href="#" onclick="logout()">Logout</a></li>
+  </ul>
+</nav>
+
+<!-- News Container -->
+<div class="news-container" id="news-container">
+  <!-- Loading Spinner will be shown while fetching news -->
+  <div id="loading-spinner" class="spinner"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"> </script>
+<script>
+  // API Key
+ const API_KEY = 'a7034c5093b144a9b450dc2251612f1e';
+
+ async function fetchSportsNews() {
+     const newsContainer = document.getElementById('news-container');
+     const loadingSpinner = document.getElementById('loading-spinner');
+
+     // Show the loading spinner while news is being fetched
+     loadingSpinner.style.display = 'block';
+
+     try {
+         const url = `https://newsapi.org/v2/top-headlines?category=sports&apiKey=${API_KEY}`;
+         const response = await fetch(url);
+
+         if (!response.ok) throw new Error('Network response was not ok');
+
+         const data = await response.json();
+
+         if (data.status === "ok") {
+             displayNews(data.articles);
+         } else {
+             throw new Error(data.message);
+         }
+     } catch (error) {
+         console.error("Error fetching news:", error);
+         newsContainer.innerHTML = `<p>Failed to load news. Please try again later.</p>`;
+     } finally {
+         // Hide the loading spinner once the news is loaded
+         loadingSpinner.style.display = 'none';
+     }
+ }
+
+ function displayNews(articles) {
+     const newsContainer = document.getElementById('news-container');
+     newsContainer.innerHTML = ''; // Clear previous content
+
+     articles
+         .filter(article => article.urlToImage) // Only include articles with images
+         .forEach(article => {
+             const newsCard = document.createElement('div');
+             newsCard.classList.add('news-card');
+
+             newsCard.innerHTML = `
+                 <img src="${article.urlToImage}" alt="${article.title}">
+                 <div class="content">
+                     <h3>${article.title}</h3>
+                     <p>${article.description || 'No description available.'}</p>
+                     <a href="${article.url}" target="_blank">Read More</a>
+                 </div>
+             `;
+
+             newsContainer.appendChild(newsCard);
+         });
+ }
+ // Fetch and Display News on Page Load
+ fetchSportsNews();
+</script>
+</body>
+</html>

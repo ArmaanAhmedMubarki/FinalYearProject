@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Upcoming Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-coach.css" rel="stylesheet">
+    <style>
+       .section-title {
+            font-size: 2.8rem;
+           color: #444;
+           text-align: center;
+           margin-bottom: 40px;
+           text-transform: uppercase;
+           letter-spacing: 1.5px;
+           animation: fadeInDown 1s ease;
+          }
+        .btn{
+             background-color: #4A148C;
+             color: white;
+         }
+         .btn:hover {
+             background-color: #6A1B9A;
+             color: #f9a826;
+         }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">Coach</div>
+    <ul>
+        <li><a href="CoachHome.html">Home</a></li>
+        <li><a href="CoachEvent.html">Events</a></li>
+        <li><a href="AthletesForCoach.html">Athletes</a></li>
+        <li><a href="CoachResult.html">Results</a></li>
+        <li><a href="CoachNews.html">News</a></li>
+        <li><a href="CoachProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container my-5">
+    <h1 class="section-title">Upcoming Events</h1>
+
+    <!-- Loader -->
+    <div class="d-none text-center my-4" id="loader">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Events Container -->
+    <div class="row g-4" id="events-container">
+        <!-- Dynamic cards will be appended here -->
+    </div>
+</div>
+
+<!-- Registered Athletes Modal -->
+<div aria-hidden="true" aria-labelledby="registeredAthletesModalLabel" class="modal fade" id="registeredAthletesModal"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registeredAthletesModalLabel">Registered Athletes</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Height (cm)</th>
+                        <th>Weight (kg)</th>
+                        <th>Gender</th>
+                    </tr>
+                    </thead>
+                    <tbody id="athletesTableBody">
+                    <!-- Athlete rows will be appended dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"></script>
+<script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    const eventsContainer = document.getElementById('events-container');
+    const loader = document.getElementById('loader');
+    const registeredAthletesModal = new bootstrap.Modal(document.getElementById('registeredAthletesModal'));
+    const athletesTableBody = document.getElementById('athletesTableBody');
+
+    async function fetchEvents() {
+        loader.classList.remove('d-none'); // Show the loader
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8080/api/events', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const events = response.data;
+            const today = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+
+            eventsContainer.innerHTML = ''; // Clear the container
+            const upcomingEvents = events.filter(event => event.eventDate > today);
+
+            if (upcomingEvents.length === 0) {
+                // Show message if no events are found
+                eventsContainer.innerHTML = `
+                    <div class="text-center">
+                        <h5>No upcoming events for now.</h5>
+                    </div>`;
+            } else {
+                // Create cards for upcoming events
+                upcomingEvents.forEach(event => createEventCard(event));
+            }
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            eventsContainer.innerHTML = `
+                <div class="text-center text-danger">
+                    <h5>Error loading events. Please try again later.</h5>
+                </div>`;
+        } finally {
+            loader.classList.add('d-none'); // Hide the loader
+        }
+    }
+
+    function createEventCard(event) {
+        const card = document.createElement('div');
+        card.className = 'col-md-4 mb-4'; // Add margin for better spacing
+        card.setAttribute('data-id', event.id); // Store event ID here
+        card.innerHTML = `
+            <div class="card">
+                <img src="data:image/jpeg;base64,${event.imageLink}" class="card-img-top" alt="Event Image" style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">${event.eventName}</h5>
+                    <p class="card-text">Category: ${event.category}</p>
+                    <p class="card-text">Date: ${formatDate(event.eventDate)}</p>
+                    <p class="card-text">Meet: ${event.meet?.name || event.meetName || 'N/A'}</p>
+                    <p class="card-text">Location: ${event.location}</p>
+                    <button class="btn  me-2" onclick="showRegisteredAthletes(${event.id})">Registrations</button>
+                </div>
+            </div>`;
+        eventsContainer.appendChild(card);
+    }
+
+    // Add a default message when there are no events
+    document.addEventListener('DOMContentLoaded', fetchEvents);
+
+    //Ensure the loader is hidden initially
+    loader.classList.add('d-none');
+
+    async function showRegisteredAthletes(eventId) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const registrations = response.data;
+        const approvedAthletes = registrations.filter(reg => reg.status === 'APPROVED');
+
+        // Clear table content before populating new data
+        athletesTableBody.innerHTML = '';
+
+        if (approvedAthletes.length === 0) {
+            // Show message if no athletes are registered
+            const row = `<tr>
+                <td colspan="5" class="text-center">No athletes have registered for this event</td>
+            </tr>`;
+            athletesTableBody.insertAdjacentHTML('beforeend', row);
+        }
+
+        for (const reg of approvedAthletes) {
+            const athleteResponse = await axios.get(`http://localhost:8080/api/athlete/profile/search?id=${reg.athleteId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const athlete = athleteResponse.data;
+            const age = calculateAge(athlete.birthDate);
+
+            const row = `<tr>
+                <td>${athlete.name}</td>
+                <td>${age}</td>
+                <td>${athlete.height}</td>
+                <td>${athlete.weight}</td>
+                <td>${athlete.gender}</td>
+            </tr>`;
+            athletesTableBody.insertAdjacentHTML('beforeend', row);
+        }
+
+        // Show modal
+        registeredAthletesModal.show();
+    } catch (error) {
+        console.error('Error fetching registered athletes:', error);
+    }
+}
+
+  function calculateAge(birthDate) {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    return age;
+}
+
+// Handle modal close event
+document.getElementById('registeredAthletesModal').addEventListener('hidden.bs.modal', () => {
+    // Clear the table data when the modal is closed
+    athletesTableBody.innerHTML = '';
+});
+
+    document.addEventListener('DOMContentLoaded', fetchEvents);
+
+
+</script>
+
+</body>
+</html>
