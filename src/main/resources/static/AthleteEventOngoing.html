@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Ongoing Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-athlete.css" rel="stylesheet">
+    <style>
+        /* Events header */
+        .events-header {
+            background: linear-gradient(to right, rgba(18, 19, 20, 0.7), rgba(0, 86, 179, 0.7)),
+                        url('images/EventHeader.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        /* Events section */
+        .events-section {
+            padding: 40px 20px;
+            flex: 1;
+        }
+
+        /* Events container with responsive grid */
+        .events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        /* Event card styling */
+        .event-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .event-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .event-details {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .event-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .event-details p {
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+
+        .event-category {
+            font-size: 0.9rem;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        /* Status badge styling */
+        .registration-status {
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Register button styling */
+        .register-btn {
+            padding: 12px 20px;
+            background-color: #4A148C;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: auto;
+            width: 100%;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        .register-btn:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        /* Withdraw button styling */
+        .withdraw-btn {
+            padding: 12px 20px;
+            background-color: white;
+            color: #333;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            margin-top: auto;
+            width: 100%;
+            box-sizing: border-box;
+            display: block;
+            font-weight: 500;
+        }
+
+        .withdraw-btn:hover {
+            background-color: #f5f5f5;
+            border-color: #999;
+        }
+
+        /* Loader */
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .events-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .events-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">Athlete</div>
+    <ul>
+        <li><a href="AthleteHome.html">Home</a></li>
+        <li><a href="AthleteEvent.html">Events</a></li>
+        <li><a href="CoachesForAthlete.html">Coaches</a></li>
+        <li><a href="AthleteResult.html">Results</a></li>
+        <li><a href="AthleteNews.html">News</a></li>
+        <li><a href="AthleteProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<header class="events-header">
+    <div class="header-content">
+        <h1>Ongoing Events</h1>
+        <p>Experience today's live sports action!</p>
+    </div>
+</header>
+
+<main>
+    <section class="events-section">
+        <div class="loader" id="loader"></div>
+        <div class="events-container" id="events-container"></div>
+    </section>
+</main>
+
+<!-- Registered Athletes Modal -->
+<div aria-hidden="true" aria-labelledby="registeredAthletesModalLabel" class="modal fade" id="registeredAthletesModal"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registeredAthletesModalLabel">Registered Athletes</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Height (cm)</th>
+                        <th>Weight (kg)</th>
+                        <th>Gender</th>
+                    </tr>
+                    </thead>
+                    <tbody id="athletesTableBody">
+                    <!-- Athlete rows will be appended dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registration Modal -->
+<div aria-hidden="true" class="modal" id="registrationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Registration</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to register for this event?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-primary" id="confirmRegisterBtn" type="button">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div aria-hidden="true" class="modal" id="withdrawModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Withdrawal</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to withdraw from this event?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-danger" id="confirmWithdrawBtn" type="button">Withdraw</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registration Success Modal -->
+<div aria-hidden="true" class="modal" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Success</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                Action completed successfully!
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script src="TokenCheck.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    const registeredAthletesModal = new bootstrap.Modal(document.getElementById('registeredAthletesModal'));
+    const athletesTableBody = document.getElementById('athletesTableBody');
+
+    // Helper function to format the current date
+
+     function getTodayDate() {
+         const today = new Date();
+         return today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+     }
+
+     // Fetch events data
+
+     async function loadAthleteRegistrations() {
+         const token = localStorage.getItem('token');
+         const roleId = parseInt(localStorage.getItem('roleId'));
+
+         try {
+             const response = await fetch(`http://localhost:8080/api/registration/search?athleteId=${roleId}`, {
+                 method: 'GET',
+                 headers: {
+                     'Authorization': `Bearer ${token}`
+                 }
+             });
+
+             if (!response.ok) {
+                 return [];
+             }
+
+             return await response.json();
+         } catch (error) {
+             console.error('Error fetching registrations:', error);
+             return [];
+         }
+     }
+
+     async function fetchEvents() {
+         const loader = document.getElementById('loader');
+         const eventsContainer = document.getElementById('events-container');
+         const token = localStorage.getItem('token');
+
+         loader.style.display = 'block';
+         eventsContainer.innerHTML = '';
+
+         try {
+             const response = await fetch('http://localhost:8080/api/events', {
+                 method: 'GET',
+                 headers: {
+                     'Authorization': `Bearer ${token}`
+                 }
+             });
+
+             const data = await response.json();
+             const today = getTodayDate();
+             const allOngoingEvents = data.filter(event => event.eventDate === today);
+
+             if (allOngoingEvents.length === 0) {
+                 loader.style.display = 'none';
+                 eventsContainer.innerHTML = '<p style="text-align: center; padding: 40px; font-size: 1.1rem; color: #666;">No events today!</p>';
+                 return;
+             }
+
+             const registrations = await loadAthleteRegistrations();
+
+             loader.style.display = 'none';
+
+             allOngoingEvents.forEach(event => {
+                 const eventCard = document.createElement('div');
+                 eventCard.className = 'event-card';
+                 const meetName = event.meet?.name || event.meetName || 'N/A';
+
+                 const registration = registrations.find(reg => reg.eventId === event.id);
+                 const status = registration ? registration.status : null;
+
+                 let statusClass = '';
+                 let statusText = '';
+
+                 if (status === 'APPROVED') {
+                     statusClass = 'status-approved';
+                     statusText = 'Approved';
+                 } else if (status === 'PENDING') {
+                     statusClass = 'status-pending';
+                     statusText = 'Pending';
+                 } else if (status === 'REJECTED') {
+                     statusClass = 'status-rejected';
+                     statusText = 'Rejected';
+                 }
+
+                 const statusHTML = status ? `<p class="registration-status ${statusClass}">Status: ${statusText}</p>` : '';
+
+                 const isRegistered = !!registration;
+                 const buttonHTML = isRegistered
+                     ? `<button class="withdraw-btn" onclick="openWithdrawModal(${registration.id})">Withdraw</button>`
+                     : `<button class="register-btn" onclick="openModal(${event.id})">Register</button>`;
+
+                 eventCard.innerHTML = `
+                     <img src="data:image/jpeg;base64,${event.imageLink}" alt="${event.eventName}">
+                     <div class="event-details">
+                         <h3>${event.eventName}</h3>
+                         <p>Meet: ${meetName}</p>
+                         <p>Location: ${event.location}</p>
+                         <p class="event-category">Category: ${event.category}</p>
+                         <p>Date: ${formatDate(event.eventDate)}</p>
+                         ${statusHTML}
+                         ${buttonHTML}
+                     </div>
+                 `;
+
+                 eventsContainer.appendChild(eventCard);
+             });
+         } catch (error) {
+             loadingElement.innerText = 'Error fetching events.';
+             console.error('Error fetching events:', error);
+         }
+     }
+
+     async function showRegisteredAthletes(eventId) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const registrations = response.data;
+        const approvedAthletes = registrations.filter(reg => reg.status === 'APPROVED');
+
+        // Clear table content before populating new data
+        athletesTableBody.innerHTML = '';
+
+        if (approvedAthletes.length === 0) {
+            // Show message if no athletes are registered
+            const row = `<tr>
+                <td colspan="5" class="text-center">No athletes have registered for this event</td>
+            </tr>`;
+            athletesTableBody.insertAdjacentHTML('beforeend', row);
+        }
+
+        for (const reg of approvedAthletes) {
+            const roleId = localStorage.getItem("roleId");
+            const athleteResponse = await axios.get(`http://localhost:8080/api/athlete/profile/search?id=${reg.athleteId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const athlete = athleteResponse.data;
+            const age = calculateAge(athlete.birthDate);
+            const row = `<tr>
+                <td>${athlete.name}</td>
+                <td>${age}</td>
+                <td>${athlete.height}</td>
+                <td>${athlete.weight}</td>
+                <td>${athlete.gender}</td>
+            </tr>`;
+            athletesTableBody.insertAdjacentHTML('beforeend', row);
+        }
+
+        // Show modal
+        registeredAthletesModal.show();
+    } catch (error) {
+        console.error('Error fetching registered athletes:', error);
+    }
+}
+
+         // Calculate age
+    function calculateAge(birthDate) {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    return age;
+   }
+
+// Handle modal close event
+document.getElementById('registeredAthletesModal').addEventListener('hidden.bs.modal', () => {
+    // Clear the table data when the modal is closed
+    athletesTableBody.innerHTML = '';
+});
+
+    function openModal(eventId) {
+        const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+        registrationModal.show();
+
+        document.getElementById('confirmRegisterBtn').onclick = () => registerEvent(eventId);
+    }
+
+    async function registerEvent(eventId) {
+        const token = localStorage.getItem('token');
+        const athleteId = localStorage.getItem('roleId');
+        const registrationDate = new Date().toISOString().split('T')[0];
+
+        const registrationDTO = {
+            athleteId: Number(athleteId),
+            eventId: Number(eventId),
+            registrationDate
+        };
+
+        const registrationModalElement = document.getElementById('registrationModal');
+        const registrationModal = bootstrap.Modal.getInstance(registrationModalElement);
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/registration/create?registrationDTO=${encodeURIComponent(JSON.stringify(registrationDTO))}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Registration failed');
+            }
+
+            if (registrationModal) {
+                registrationModal.hide();
+            }
+
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+
+            await fetchEvents();
+        } catch (error) {
+            console.error('Error during registration:', error);
+            alert('Something went wrong during registration.');
+        }
+    }
+
+    function openWithdrawModal(registrationId) {
+        const withdrawModal = new bootstrap.Modal(document.getElementById('withdrawModal'));
+        withdrawModal.show();
+
+        document.getElementById('confirmWithdrawBtn').onclick = () => withdrawEvent(registrationId);
+    }
+
+    async function withdrawEvent(registrationId) {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/registration/delete/${registrationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to withdraw registration');
+            }
+
+            const withdrawModal = bootstrap.Modal.getInstance(document.getElementById('withdrawModal'));
+            if (withdrawModal) {
+                withdrawModal.hide();
+            }
+
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+
+            await fetchEvents();
+        } catch (error) {
+            console.error('Error withdrawing registration:', error);
+            alert('Something went wrong during withdrawal.');
+        }
+    }
+
+     // Load events on page load
+
+     document.addEventListener('DOMContentLoaded', fetchEvents);
+</script>
+</body>
+</html>
