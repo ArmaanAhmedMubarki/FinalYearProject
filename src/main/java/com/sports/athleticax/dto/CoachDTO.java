@@ -1,9 +1,14 @@
 package com.sports.athleticax.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CoachDTO {
 
     private Long id;
-    private String name; // From User entity
+    private String name;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private String birthDate;
     private String gender;
     private String category;
