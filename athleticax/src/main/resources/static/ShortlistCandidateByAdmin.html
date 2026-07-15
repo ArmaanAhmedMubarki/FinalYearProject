@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Shortlist Candidates</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-admin.css" rel="stylesheet">
+    <style>
+        .section-title {
+            font-size: 2rem;
+            color: #444;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .eligibility-badge {
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .badge-auto-qualified {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-ineligible {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-manual-review {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .rejection-reason {
+            color: #dc3545;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table thead th {
+            background-color: #4A148C;
+            color: white;
+            font-weight: bold;
+            padding: 12px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table tbody tr {
+            cursor: pointer;
+        }
+
+        .candidates-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .candidates-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .candidates-modal-content {
+            background-color: white;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .candidates-modal-header {
+            background-color: #4A148C;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .candidates-modal-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .candidates-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .candidates-modal-close:hover {
+            color: #f9a826;
+        }
+
+        .candidates-modal-body {
+            padding: 20px;
+        }
+
+        .candidates-inner-table {
+            margin-bottom: 0;
+            background-color: white;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .candidates-inner-table thead th {
+            background-color: #4A148C;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #4A148C;
+        }
+
+        .candidates-inner-table tbody td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            word-break: break-word;
+        }
+
+        .candidates-inner-table tbody td:last-child {
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .btn-view-candidates {
+            background-color: #4A148C;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-view-candidates:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-approve {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-approve:hover {
+            background-color: #218838;
+        }
+
+        .btn-approve:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-reject {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-reject:hover {
+            background-color: #c82333;
+        }
+
+        .approval-badge {
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .approval-approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .approval-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .no-events-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background-color: #4A148C;
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+            font-weight: 500;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .bulk-info {
+            text-align: center;
+            padding: 10px;
+            background-color: #e7f3ff;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #004085;
+        }
+
+        .btn-bulk-approve {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-bulk-approve:hover:not(:disabled) {
+            background-color: #218838;
+        }
+
+        .btn-bulk-approve:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-bulk-reject {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-bulk-reject:hover:not(:disabled) {
+            background-color: #c82333;
+        }
+
+        .btn-bulk-reject:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .checkbox-col {
+            text-align: center;
+            width: 50px;
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">Admin</div>
+    <ul>
+        <li><a href="AdminHome.html">Home</a></li>
+        <li><a href="AdminEvent.html">Events</a></li>
+        <li><a href="CoachesForAdmin.html">Coaches</a></li>
+        <li><a href="AthletesForAdmin.html">Athletes</a></li>
+        <li><a href="AdminResult.html">Results</a></li>
+        <li><a href="AdminNews.html">News</a></li>
+        <li><a href="AdminProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container my-5 px-4">
+    <h1 class="section-title">Shortlist Candidates</h1>
+
+    <div class="text-center my-4" id="loader" style="display: none;">
+        <div class="loader"></div>
+        <p>Loading events...</p>
+    </div>
+
+    <div class="error-message" id="error-message" style="display: none;"></div>
+
+    <div class="table-container" id="tableContainer" style="display: none;">
+        <table class="table table-hover" style="border-collapse: collapse;">
+            <thead style="background-color: #4A148C !important; display: table-header-group;">
+            <tr style="background-color: #4A148C;">
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Sl No</th>
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Event Name</th>
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Date</th>
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Category</th>
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Location</th>
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Registrations</th>
+                <th style="background-color: #4A148C; color: white; padding: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #4A148C;">Action</th>
+            </tr>
+            </thead>
+            <tbody id="events-table">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="no-events-message" id="noEventsMessage" style="display: none;">
+        No events available.
+    </div>
+</div>
+
+<!-- Candidates Modal -->
+<div class="candidates-modal" id="candidatesModal">
+    <div class="candidates-modal-content">
+        <div class="candidates-modal-header">
+            <h2 id="candidatesModalTitle">Candidates for Event</h2>
+            <button class="candidates-modal-close" onclick="closeCandidatesModal()">&times;</button>
+        </div>
+        <div class="candidates-modal-body">
+            <div id="candidatesModalContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="successMessage">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="TokenCheck.js"></script>
+
+<script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadEvents();
+
+        const modal = document.getElementById('candidatesModal');
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeCandidatesModal();
+            }
+        });
+    });
+
+    async function loadEvents() {
+        const loader = document.getElementById('loader');
+        const tableContainer = document.getElementById('tableContainer');
+        const noEventsMessage = document.getElementById('noEventsMessage');
+        const errorMessage = document.getElementById('error-message');
+        const eventsTable = document.getElementById('events-table');
+
+        loader.style.display = 'block';
+        tableContainer.style.display = 'none';
+        noEventsMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8080/api/events', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const events = response.data;
+            eventsTable.innerHTML = '';
+
+            if (events.length === 0) {
+                noEventsMessage.style.display = 'block';
+            } else {
+                for (let index = 0; index < events.length; index++) {
+                    const event = events[index];
+                    const registrations = await getRegistrationCount(event.id);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${index + 1}</strong></td>
+                        <td>${event.eventName}</td>
+                        <td>${formatDate(event.eventDate)}</td>
+                        <td>${event.category}</td>
+                        <td>${event.location}</td>
+                        <td>${registrations}</td>
+                        <td>
+                            <button class="btn-view-candidates" onclick="openCandidatesModal(${event.id}, '${event.eventName}')">
+                                <i class="bi bi-chevron-down"></i> View Candidates
+                            </button>
+                        </td>
+                    `;
+                    eventsTable.appendChild(row);
+                }
+                tableContainer.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error loading events:', error);
+            errorMessage.textContent = 'Error loading events. Please try again.';
+            errorMessage.style.display = 'block';
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    async function getRegistrationCount(eventId) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data.length;
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    function openCandidatesModal(eventId, eventName) {
+        document.getElementById('candidatesModalTitle').textContent = `Candidates for ${eventName}`;
+        loadCandidatesInModal(eventId);
+        document.getElementById('candidatesModal').classList.add('show');
+    }
+
+    function closeCandidatesModal() {
+        document.getElementById('candidatesModal').classList.remove('show');
+    }
+
+    async function loadCandidatesInModal(eventId) {
+        const container = document.getElementById('candidatesModalContent');
+        container.innerHTML = '<div class="loader" style="margin: 20px auto;"></div>';
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/registration/eligible-candidates?eventId=${eventId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const candidates = response.data;
+            container.innerHTML = '';
+
+            if (candidates.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted" style="padding: 30px; font-size: 1.1rem; color: #999;"><i class="bi bi-info-circle"></i> No candidates found!</p>';
+            } else {
+                let html = `
+                    <div class="bulk-info" id="bulkInfo" style="display: none;">
+                        <span id="selectedCount">0</span> candidate(s) selected
+                    </div>
+                    <table class="table candidates-inner-table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-col">
+                                    <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(event)">
+                                </th>
+                                <th>Sl</th>
+                                <th>Athlete Name</th>
+                                <th>Age</th>
+                                <th>Weight (kg)</th>
+                                <th>Height (cm)</th>
+                                <th>Gender</th>
+                                <th>Eligibility Status</th>
+                                <th>Rejection Reason</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                candidates.forEach((candidate, index) => {
+                    const statusClass = candidate.eligibilityStatus === 'AUTO_QUALIFIED' ? 'badge-auto-qualified' : (candidate.eligibilityStatus === 'INELIGIBLE' ? 'badge-ineligible' : 'badge-manual-review');
+                    const statusText = candidate.eligibilityStatus === 'AUTO_QUALIFIED' ? 'Auto Qualified' : (candidate.eligibilityStatus === 'INELIGIBLE' ? 'Ineligible' : 'Manual Review');
+                    const rejectionReasonHtml = candidate.rejectionReason ? `<small class="rejection-reason" style="white-space: pre-wrap; display: block;">${candidate.rejectionReason}</small>` : '-';
+
+                    let actionHtml = '';
+                    if (candidate.approvalStatus === 'APPROVED') {
+                        actionHtml = '<span class="approval-badge approval-approved">✓ Approved</span>';
+                    } else if (candidate.approvalStatus === 'REJECTED') {
+                        actionHtml = '<span class="approval-badge approval-rejected">✕ Rejected</span>';
+                    } else {
+                        actionHtml = `
+                            <button class="btn-approve" onclick="updateCandidateStatus(${candidate.athleteId}, ${eventId}, 'APPROVED')" style="margin-right: 5px;">
+                                Approve
+                            </button>
+                            <button class="btn-reject" onclick="updateCandidateStatus(${candidate.athleteId}, ${eventId}, 'REJECTED')">
+                                Reject
+                            </button>
+                        `;
+                    }
+
+                    const isApproved = candidate.approvalStatus === 'APPROVED' || candidate.approvalStatus === 'REJECTED';
+                    const isDisabled = isApproved ? 'disabled' : '';
+
+                    // FIX 1: Attach BOTH athleteId and eventId securely to the checkbox row
+                    html += `
+                        <tr>
+                            <td class="checkbox-col">
+                                <input type="checkbox" class="candidate-checkbox" data-athlete-id="${candidate.athleteId}" data-event-id="${eventId}" ${isDisabled} onchange="updateBulkInfo()">
+                            </td>
+                            <td>${index + 1}</td>
+                            <td>${candidate.athleteName || 'Unknown'}</td>
+                            <td>${candidate.age}</td>
+                            <td>${candidate.weight}</td>
+                            <td>${candidate.height}</td>
+                            <td>${candidate.gender}</td>
+                            <td><span class="eligibility-badge ${statusClass}">${statusText}</span></td>
+                            <td>${rejectionReasonHtml}</td>
+                            <td>${actionHtml}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                        </tbody>
+                    </table>
+                    <div class="bulk-actions">
+                        <button class="btn-bulk-approve" id="bulkApproveBtn" disabled onclick="bulkApproveSelected()">
+                            ✓ Approve Selected
+                        </button>
+                        <button class="btn-bulk-reject" id="bulkRejectBtn" disabled onclick="bulkRejectSelected()">
+                            ✕ Reject Selected
+                        </button>
+                    </div>
+                `;
+
+                container.innerHTML = html;
+            }
+        } catch (error) {
+            console.error('Error loading candidates:', error);
+            container.innerHTML = '<p class="text-danger" style="padding: 20px; font-weight: 500;"><i class="bi bi-exclamation-circle"></i> Error loading candidates. Please try again.</p>';
+        }
+    }
+
+    async function updateCandidateStatus(athleteId, eventId, status) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}&athleteId=${athleteId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Handle the response cleanly
+            const registration = response.data;
+            await axios.put(`http://localhost:8080/api/registration/update?id=${registration.id}&status=${status}`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const statusText = status === 'APPROVED' ? 'approved' : 'rejected';
+            document.getElementById('successMessage').textContent = `Candidate ${statusText} successfully!`;
+            const modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+
+            setTimeout(() => { location.reload(); }, 2000);
+        } catch (error) {
+            console.error('Error updating candidate status:', error);
+            alert('Error updating candidate. Please try again.');
+        }
+    }
+
+    function toggleSelectAll(event) {
+        const isChecked = event.target.checked;
+        const checkboxes = document.querySelectorAll('.candidate-checkbox:not(:disabled)');
+        checkboxes.forEach(checkbox => { checkbox.checked = isChecked; });
+        updateBulkInfo();
+    }
+
+    function updateBulkInfo() {
+        const selectedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked');
+        const count = selectedCheckboxes.length;
+        const bulkInfo = document.getElementById('bulkInfo');
+        const bulkApproveBtn = document.getElementById('bulkApproveBtn');
+        const bulkRejectBtn = document.getElementById('bulkRejectBtn');
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+
+        if (count > 0) {
+            bulkInfo.style.display = 'block';
+            document.getElementById('selectedCount').textContent = count;
+            bulkApproveBtn.disabled = false;
+            bulkRejectBtn.disabled = false;
+        } else {
+            bulkInfo.style.display = 'none';
+            bulkApproveBtn.disabled = true;
+            bulkRejectBtn.disabled = true;
+            if(selectAllCheckbox) selectAllCheckbox.checked = false;
+        }
+    }
+
+    async function bulkApproveSelected() { await performBulkAction('APPROVED'); }
+    async function bulkRejectSelected() { await performBulkAction('REJECTED'); }
+
+    // FIX 2: Self-contained loop logic that extracts correct data properties
+    async function performBulkAction(status) {
+        const selectedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            alert('Please select at least one candidate');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            let successCount = 0;
+
+            for (let i = 0; i < selectedCheckboxes.length; i++) {
+                // Read from our new data attributes
+                const athleteId = selectedCheckboxes[i].getAttribute('data-athlete-id');
+                const eventId = selectedCheckboxes[i].getAttribute('data-event-id');
+
+                // Fetch the exact registration record
+                const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}&athleteId=${athleteId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                // Check for single object response since your backend uses an Object here
+                let registrationId = null;
+                if (Array.isArray(response.data) && response.data.length > 0) {
+                    registrationId = response.data[0].id;
+                } else if (response.data && response.data.id) {
+                    registrationId = response.data.id;
+                }
+
+                // Perform the update
+                if (registrationId) {
+                    await axios.put(`http://localhost:8080/api/registration/update?id=${registrationId}&status=${status}`, {}, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    successCount++;
+                }
+            }
+
+            if (successCount === 0) {
+                alert("Could not process the candidates. The records might be missing.");
+                return;
+            }
+
+            const statusText = status === 'APPROVED' ? 'approved' : 'rejected';
+            document.getElementById('successMessage').textContent = `${successCount} candidate(s) ${statusText} successfully!`;
+            const modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+
+            setTimeout(() => { location.reload(); }, 2000);
+        } catch (error) {
+            console.error('Error performing bulk action:', error);
+            alert('Error performing bulk action. Please check the console for details.');
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -73,4 +73,3 @@ public class Coach {
         this.imageLink = imageLink;
     }
 }
-

@@ -1,6 +1,5 @@
 package com.sports.athleticax.security;
 import com.sports.athleticax.services.UserService;
-import com.sports.athleticax.dto.LoginRequest;
 import com.sports.athleticax.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

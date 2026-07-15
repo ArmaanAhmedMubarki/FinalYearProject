@@ -1,9 +1,7 @@
 package com.sports.athleticax.controller;
 
 import com.sports.athleticax.services.AthleteService;
-import com.sports.athleticax.dto.AdminDTO;
 import com.sports.athleticax.dto.AthleteDTO;
-import com.sports.athleticax.dto.CoachDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

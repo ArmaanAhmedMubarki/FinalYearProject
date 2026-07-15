@@ -2,9 +2,9 @@ package com.sports.athleticax.services;
 
 import com.sports.athleticax.repository.CoachRepository;
 import com.sports.athleticax.repository.UserRepository;
-import com.sports.athleticax.dto.AthleteDTO;
+// import com.sports.athleticax.dto.AthleteDTO;
 import com.sports.athleticax.dto.CoachDTO;
-import com.sports.athleticax.entity.Athlete;
+// import com.sports.athleticax.entity.Athlete;
 import com.sports.athleticax.entity.Coach;
 import com.sports.athleticax.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class CoachService {
         Coach coach = coachRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Athlete profile not found"));
 
-        User user = coach.getUser();
+        // User user = coach.getUser();
 
         // Return AthleteDTO with user and athlete data
         CoachDTO coachDTO = new CoachDTO(
@@ -112,4 +112,3 @@ public class CoachService {
         return coachDTO;
     }
 }
-

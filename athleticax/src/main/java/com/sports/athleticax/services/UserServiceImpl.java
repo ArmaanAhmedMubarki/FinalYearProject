@@ -4,10 +4,12 @@ import com.sports.athleticax.dto.LoginRequest;
 import com.sports.athleticax.entity.*;
 import com.sports.athleticax.dto.RegisterRequest;
 import com.sports.athleticax.exception.ApiException;
+import com.sports.athleticax.repository.AdminRepository;
 import com.sports.athleticax.repository.RoleRepository;
 import com.sports.athleticax.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+// import com.sports.athleticax.repository.AdminRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +23,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AdminRepository adminRepository;
 
     @Override
     public User registerUser(RegisterRequest request) {
@@ -101,5 +106,25 @@ public class UserServiceImpl implements UserService {
         // Return the user if authentication is successful
         return user;
     }
+    @Override
+    public boolean emailExists(String email) {
+    return userRepository.findByEmail(email) != null;
+    }
+    @Override
+    public void updatePassword(String email, String newPassword) {
 
+    User user = userRepository.findByEmail(email);
+
+    if (user == null) {
+        throw new ApiException("User not found");
+    }
+
+    user.setPassword(passwordEncoder.encode(newPassword));
+
+    userRepository.save(user);
+    }
+    @Override
+    public boolean adminExists() {
+    return adminRepository.count() > 0;
+   }
 }

@@ -32,10 +32,9 @@
        }
 
        .navbar .logo {
-           font-size: 1.5rem;
+           font-size: 2.0rem;
            font-weight: bold;
            color: #f9a826;
-           text-transform: uppercase;
        }
 
        .navbar ul {
@@ -118,7 +117,7 @@
 <body>
 <!-- Navbar -->
 <nav class="navbar">
-    <div class="logo">SPORTS PORTAL</div>
+    <div class="logo">AthleticaX</div>
     <ul>
         <li><a href="Welcome.html">Home</a></li>
         <li><a href="PublicEvent.html">Events</a></li>
@@ -136,7 +135,7 @@
 
 <!-- Footer -->
 <footer>
-    <p>&copy; 2025 Sports Management Platform. All rights reserved.</p>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
 </footer>
 
 <!-- Modal -->
@@ -160,6 +159,34 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
     async function fetchEvents() {
         try {
             const response = await fetch("http://localhost:8080/api/events");
@@ -192,9 +219,9 @@
                                 <h5 class="card-title">${event.eventName}</h5>
                                 <p class="card-text">
                                     <strong>Category:</strong> ${event.category}<br>
-                                    <strong>Date:</strong> ${event.eventDate}<br>
+                                    <strong>Date:</strong> ${formatDate(event.eventDate)}<br>
                                     <strong>Location:</strong> ${event.location}<br>
-                                    <strong>Meet Name:</strong> ${event.meetName}
+                                    <strong>Meet Name:</strong> ${event.meet?.name || event.meetName || 'N/A'}
                                 </p>
                                 <button class="register-button" onclick="showLoginModal()">Register</button>
                             </div>

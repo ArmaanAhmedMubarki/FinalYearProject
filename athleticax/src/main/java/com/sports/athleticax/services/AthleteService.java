@@ -3,10 +3,10 @@ package com.sports.athleticax.services;
 import com.sports.athleticax.repository.AthleteRepository;
 import com.sports.athleticax.repository.UserRepository;
 import com.sports.athleticax.dto.AthleteDTO;
-import com.sports.athleticax.dto.CoachDTO;
-import com.sports.athleticax.entity.Admin;
+// import com.sports.athleticax.dto.CoachDTO;
+// import com.sports.athleticax.entity.Admin;
 import com.sports.athleticax.entity.Athlete;
-import com.sports.athleticax.entity.Coach;
+// import com.sports.athleticax.entity.Coach;
 import com.sports.athleticax.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,10 +33,15 @@ public class AthleteService {
             throw new RuntimeException("User not found");
         }
 
-
         // Find the associated Athlete profile by userId
         Athlete athlete = athleteRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new RuntimeException("Athlete profile not found"));
+
+        // Validate weight - if > 300, likely a data entry error
+        Long validatedWeight = athlete.getWeight();
+        if (validatedWeight != null && validatedWeight > 300) {
+            validatedWeight = null;
+        }
 
         // Return AthleteDTO with user and athlete data
         AthleteDTO athleteDTO = new AthleteDTO(
@@ -44,7 +49,7 @@ public class AthleteService {
                 athlete.getBirthDate(),
                 athlete.getGender(),
                 athlete.getId(),
-                athlete.getWeight(),
+                validatedWeight,
                 athlete.getImageLink(),
                 athlete.getHeight(),
                 athlete.getCategory(),
@@ -90,13 +95,19 @@ public class AthleteService {
 
         User user = athlete.getUser();
 
+        // Validate weight - if > 300, likely a data entry error
+        Long validatedWeight = athlete.getWeight();
+        if (validatedWeight != null && validatedWeight > 300) {
+            validatedWeight = null;
+        }
+
         // Return AthleteDTO with user and athlete data
         AthleteDTO athleteDTO = new AthleteDTO(
                 user.getName(),
                 athlete.getBirthDate(),
                 athlete.getGender(),
                 athlete.getId(),
-                athlete.getWeight(),
+                validatedWeight,
                 athlete.getImageLink(),
                 athlete.getHeight(),
                 athlete.getCategory(),
@@ -111,17 +122,25 @@ public class AthleteService {
 
         // Transform entities into DTOs
         return athletes.stream()
-                .map(athlete -> new AthleteDTO(
-                        athlete.getUser().getName(),
-                        athlete.getBirthDate(),
-                        athlete.getGender(),
-                        athlete.getId(),
-                        athlete.getWeight(),
-                        athlete.getImageLink(),
-                        athlete.getHeight(),
-                        athlete.getCategory(),
-                        athlete.getUser().getEmail()
-                ))
+                .map(athlete -> {
+                    Long validatedWeight = athlete.getWeight();
+                    // Validate weight - if > 300, likely a data entry error
+                    if (validatedWeight != null && validatedWeight > 300) {
+                        validatedWeight = null;
+                    }
+
+                    return new AthleteDTO(
+                            athlete.getUser().getName(),
+                            athlete.getBirthDate(),
+                            athlete.getGender(),
+                            athlete.getId(),
+                            validatedWeight,
+                            athlete.getImageLink(),
+                            athlete.getHeight(),
+                            athlete.getCategory(),
+                            athlete.getUser().getEmail()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 }

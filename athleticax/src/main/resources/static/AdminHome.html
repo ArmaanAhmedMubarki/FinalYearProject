@@ -25,17 +25,16 @@
             align-items: center;
             background-color: #4A148C;
             padding: 0 20px;
-            height: 70px; /* Consistent height */
+            height: 70px;
             color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 1rem; /* Consistent text size */
+            font-size: 1rem;
         }
 
-        .navbar .logo {
-            font-size: 1.5rem;
+ .navbar .logo {
+            font-size: 2.0rem;
             font-weight: bold;
             color: #f9a826;
-            text-transform: uppercase;
         }
 
         .navbar ul {
@@ -65,7 +64,7 @@
 
         /* Main content styles */
         #main-section {
-            flex: 1; /* Ensures it grows to fill space between header and footer */
+            flex: 1;
             background-color: #f4f4f9;
         }
 
@@ -82,7 +81,6 @@
             margin: 0;
             font-size: 0.9rem;
         }
-
 
         /* Welcome Message */
         .welcome-message {
@@ -109,21 +107,21 @@
         }
 
         .row .card {
-        height: 250px; /* Fixed height for all cards */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        background: linear-gradient(135deg, #8e44ad, #3498db);
-        color: #fff;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease, background 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
         .row .card:hover {
             transform: translateY(-10px);
@@ -155,7 +153,6 @@
             color: #FFFFFF;
         }
 
-
         .row .card-title {
             font-size: 1.5rem;
             font-weight: bold;
@@ -165,7 +162,7 @@
         }
 
         .row .btn {
-            margin-top: auto; /* Push button to the bottom */
+            margin-top: auto;
             display: inline-block;
             padding: 12px 25px;
             color: #fff;
@@ -176,6 +173,8 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-size: 14px;
+            border: none;
+            cursor: pointer;
         }
 
         .row .btn:hover {
@@ -183,7 +182,7 @@
             transform: scale(1.05);
         }
 
-        /* Added Responsive Adjustments for Cards */
+        /* Responsive Adjustments for Cards */
         @media (max-width: 768px) {
             .row {
                 margin: 20px 10px;
@@ -227,6 +226,7 @@
             padding: 12px;
             text-align: center;
         }
+
         table thead th {
             background-color: #4A148C;
             color: #fff;
@@ -250,7 +250,6 @@
             color: #555;
         }
 
-
         button {
             outline: none;
             border: none;
@@ -261,7 +260,7 @@
             outline: none;
         }
 
-          /* Modal Styles */
+        /* Modal Styles - Responsive with max-height */
         .modal {
             display: none;
             position: fixed;
@@ -273,6 +272,7 @@
             justify-content: center;
             align-items: center;
             z-index: 10000;
+            overflow-y: auto;
         }
 
         .modal-content {
@@ -281,11 +281,15 @@
             border-radius: 10px;
             width: 90%;
             max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: auto;
         }
 
         .modal-content h2 {
             margin-bottom: 1rem;
+            color: #333;
         }
 
         .modal-content form {
@@ -296,6 +300,7 @@
 
         .modal-content label {
             font-weight: bold;
+            color: #555;
         }
 
         .modal-content input,
@@ -305,6 +310,14 @@
             padding: 0.5rem;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus {
+            outline: none;
+            border-color: #4A148C;
+            box-shadow: 0 0 5px rgba(74, 20, 140, 0.3);
         }
 
         .modal-content button {
@@ -314,6 +327,8 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
+            margin-top: 0.5rem;
         }
 
         .modal-content button.cancel {
@@ -323,6 +338,38 @@
 
         .modal-content button:hover {
             opacity: 0.9;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .form-actions button {
+            flex: 1;
+        }
+
+        /* Overlay for Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .popup-overlay.show {
+            display: block;
+        }
+
+        .date-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
         }
     </style>
 </head>
@@ -369,34 +416,10 @@
             <div class="card-body">
                 <i class="bi bi-person-check"></i>
                 <h4 class="card-title">Meet</h4>
-                <button class="btn" onclick="showCreateMeetPopup()">Create Meets</button>
+                <button class="btn" onclick="openCreateMeetModal()">Create Meets</button>
             </div>
         </div>
     </div>
-
-    <!-- Popup for Creating Meet -->
-    <div id="createMeetPopup"
-         style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 300px;">
-        <h3 style="margin-bottom: 10px;">Create New Meet</h3>
-        <input id="meetNameInput" placeholder="Enter Meet Name"
-               style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;"
-               type="text">
-        <div style="text-align: right;">
-            <button onclick="closeCreateMeetPopup()"
-                    style="margin-right: 10px; padding: 10px 20px; border: none; background: #ccc; border-radius: 5px; cursor: pointer;">
-                Cancel
-            </button>
-            <button onclick="createMeet()"
-                    style="padding: 10px 20px; border: none; background: #28a745; color: #fff; border-radius: 5px; cursor: pointer;">
-                Create Now
-            </button>
-        </div>
-    </div>
-
-    <!-- Overlay for Popup -->
-    <div id="popupOverlay"
-         onclick="closeCreateMeetPopup()"
-         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;"></div>
 
     <div class="col-md-3">
         <div class="card bg-info text-white mb-4">
@@ -428,6 +451,9 @@
         <tr>
             <th>Meet ID</th>
             <th>Meet Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
             <th>Cancel</th>
         </tr>
         </thead>
@@ -439,9 +465,31 @@
 
 <!-- Footer -->
 <footer>
-    <p>&copy; 2025 Sports Management Platform. All Rights Reserved.</p>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
 </footer>
 
+<!-- Create Meet Modal -->
+<div class="modal" id="createMeetModal">
+    <div class="modal-content">
+        <h2>Create New Meet</h2>
+        <form onsubmit="submitMeet(event)">
+            <label for="meetName">Meet Name</label>
+            <input id="meetName" placeholder="Enter Meet Name" required type="text">
+
+            <label for="meetStartDate">Start Date</label>
+            <input id="meetStartDate" required type="date" min="">
+
+            <label for="meetEndDate">End Date</label>
+            <input id="meetEndDate" required type="date" min="">
+            <div class="date-info" id="dateValidationMsg"></div>
+
+            <div class="form-actions">
+                <button type="submit">Create Meet</button>
+                <button class="cancel" onclick="closeCreateMeetModal()" type="button">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Create Event Modal -->
 <div class="modal" id="createEventModal">
@@ -449,274 +497,379 @@
         <h2>Create New Event</h2>
         <form onsubmit="submitEvent(event)">
             <label for="eventTitle">Event Title</label>
-            <input id="eventTitle" required type="text">
-
-            <label for="eventDate">Event Date</label>
-            <input id="eventDate" required type="date">
+            <input id="eventTitle" required type="text" placeholder="e.g., 100m Sprint">
 
             <label for="meetSelect">Meet</label>
-            <select id="meetSelect" required>
+            <select id="meetSelect" required onchange="updateEventDateBounds()">
                 <option value="">Select a meet</option>
             </select>
 
-            <label for="venue">Location</label>
-            <input id="venue" required type="text">
+            <label for="eventDate">Event Date</label>
+            <input id="eventDate" required type="date">
+            <div class="date-info" id="eventDateInfo"></div>
 
             <label for="category">Category</label>
-            <input id="category" required type="text">
+            <input id="category" required type="text" placeholder="e.g., Men's, Women's">
+
+            <label for="venue">Location</label>
+            <input id="venue" required type="text" placeholder="e.g., Stadium Ground">
+
+            <hr style="margin: 20px 0; border-top: 2px solid #ddd;">
+            <h4 style="color: #4A148C; margin-bottom: 15px;">Eligibility Criteria (Optional)</h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label for="minAge">Minimum Age</label>
+                    <input id="minAge" type="number" min="1" max="120" placeholder="e.g., 18">
+                </div>
+                <div>
+                    <label for="maxAge">Maximum Age</label>
+                    <input id="maxAge" type="number" min="1" max="120" placeholder="e.g., 25">
+                </div>
+            </div>
+
+            <label for="genderRestriction" style="margin-top: 15px;">Gender Restriction</label>
+            <select id="genderRestriction">
+                <option value="">All</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div>
+                    <label for="minWeight">Minimum Weight (kg)</label>
+                    <input id="minWeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 50">
+                </div>
+                <div>
+                    <label for="maxWeight">Maximum Weight (kg)</label>
+                    <input id="maxWeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 80">
+                </div>
+                <div>
+                    <label for="minHeight">Minimum Height (cm)</label>
+                    <input id="minHeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 150">
+                </div>
+                <div>
+                    <label for="maxHeight">Maximum Height (cm)</label>
+                    <input id="maxHeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 200">
+                </div>
+            </div>
+
+            <hr style="margin: 20px 0; border-top: 2px solid #ddd;">
 
             <label for="photo">Photo</label>
-            <input id="photo" required type="file">
+            <input id="photo" required type="file" accept="image/*">
 
-            <div style="display: flex; justify-content: space-between;">
+            <div class="form-actions">
                 <button type="submit">Create Event</button>
                 <button class="cancel" onclick="closeModal()" type="button">Cancel</button>
             </div>
         </form>
     </div>
 </div>
+
 <script crossorigin="anonymous"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="TokenCheck.js"></script>
+
 <script>
+    let meetsData = {};
 
     // Check if user is logged in
     if (!localStorage.getItem('token')) {
         window.location.href = 'Login.html';
+    } else {
+        loadMeets();
     }
 
-    else {
-           loadMeets();
-       }
+    // ==================== CREATE MEET FUNCTIONS ====================
 
-   // Show the Meet popup
-   function showCreateMeetPopup() {
-       document.getElementById('createMeetPopup').style.display = 'block';
-       document.getElementById('popupOverlay').style.display = 'block';
-   }
-
-   // Close the Meet popup
-   function closeCreateMeetPopup() {
-       document.getElementById('createMeetPopup').style.display = 'none';
-       document.getElementById('popupOverlay').style.display = 'none';
-   }
-
-   // Create meet and send data to the server
-
-async function createMeet() {
-    const meetName = document.getElementById('meetNameInput').value.trim();
-
-    if (!meetName) {
-        alert('Please enter a meet name.');
-        return;
+    function openCreateMeetModal() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('meetStartDate').min = today;
+        document.getElementById('meetEndDate').min = today;
+        document.getElementById('createMeetModal').style.display = 'flex';
     }
 
-    // Create meet object
-    const meetDetails = {
-        name: meetName
-    };
-
-    try {
-        const response = await fetch('http://localhost:8080/api/meets/set', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, // Include Bearer token
-            },
-            body: JSON.stringify(meetDetails),
-        });
-
-        const responseData = await response.text(); // Retrieve response content
-
-        if (response.ok) {
-            alert(responseData); // Show success message
-            closeCreateMeetPopup(); // Close the popup
-            loadMeets(); // Refresh the meet table and dropdown
-        } else {
-            console.error('Server responded with error:', response.status, responseData);
-            alert(`Error creating meet: ${responseData || 'Unknown error occurred'}`);
-        }
-    } catch (error) {
-        console.error('Fetch error:', error);
-        alert('An error occurred while creating the meet. Please try again.');
-    }
-}
-
-
-// Load meet after home page open
-
- async function loadMeets() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        console.error('No token found. Redirecting to login...');
-        window.location.href = 'Login.html';
-        return;
+    function closeCreateMeetModal() {
+        document.getElementById('createMeetModal').style.display = 'none';
+        document.getElementById('meetName').value = '';
+        document.getElementById('meetStartDate').value = '';
+        document.getElementById('meetEndDate').value = '';
     }
 
-    try {
-        const response = await fetch('http://localhost:8080/api/meets', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+    async function submitMeet(event) {
+        event.preventDefault();
 
-        if (!response.ok) {
-            const error = await response.json();
-            console.error('Failed to fetch meets:', error);
+        const meetName = document.getElementById('meetName').value.trim();
+        const startDate = document.getElementById('meetStartDate').value;
+        const endDate = document.getElementById('meetEndDate').value;
+
+        if (!meetName || !startDate || !endDate) {
+            alert('Please fill in all fields.');
             return;
         }
 
-        const meets = await response.json();
-        console.log('Fetched meets:', meets);
+        // Validate date logic
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start > end) {
+            alert('Start date cannot be after end date.');
+            return;
+        }
 
-        const tableBody = document.querySelector('#meetsTable tbody');
-        const meetSelect = document.getElementById('meetSelect');
+        const meetDetails = {
+            name: meetName,
+            startDate: startDate,
+            endDate: endDate
+        };
 
-        tableBody.innerHTML = '';
-        meetSelect.innerHTML = '<option value="">Select a meet</option>'; // Reset dropdown
-
-        meets.forEach((meet, index) => {
-            // Generate formatted ID for display
-            const displayId = `M_${String(meet.id).padStart(2, '0')}`;
-
-            // Create table row
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${displayId}</td>
-                <td>${meet.name}</td>
-                <td><button class="delete-btn" data-meet-id="${displayId}">Cancel</button></td>
-            `;
-            tableBody.appendChild(row);
-
-            // Add option to dropdown
-            const option = document.createElement('option');
-            option.value = meet.name; // Keep the raw ID for the event dropdown
-            option.textContent = meet.name;
-            meetSelect.appendChild(option);
-        });
-
-        // Attach event listeners to all delete buttons
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const displayId = e.target.getAttribute('data-meet-id');
-                const rawId = displayId.replace(/^M_0*/, ''); // Remove "M_" and leading zeros
-                deleteMeet(rawId);
+        try {
+            const response = await fetch('http://localhost:8080/api/meets/set', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify(meetDetails),
             });
-        });
-    } catch (error) {
-        console.error('Error loading meets:', error);
-    }
-}
 
-       // Delete a meet
+            const responseData = await response.text();
 
-async function deleteMeet(meetId) {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        console.error('No token found. Redirecting to login...');
-        window.location.href = 'Login.html';
-        return;
-    }
-
-    // Confirm deletion with the user
-    const formattedId = `M_${String(meetId).padStart(2, '0')}`;
-    if (!confirm(`Are you sure you want to cancel Meet ID: ${formattedId}?`)) {
-        console.log('Deletion cancelled by user.');
-        return;
-    }
-
-    try {
-        const response = await fetch(`http://localhost:8080/api/meets/delete?id=${meetId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
+            if (response.ok) {
+                alert(responseData);
+                closeCreateMeetModal();
+                loadMeets();
+            } else {
+                alert(`Error creating meet: ${responseData || 'Unknown error'}`);
             }
-        });
+        } catch (error) {
+            console.error('Fetch error:', error);
+            alert('An error occurred while creating the meet.');
+        }
+    }
 
-        if (!response.ok) {
-            const error = await response.text();
-            console.error('Failed to delete meet:', error);
-            alert(`Failed to delete Meet ID: ${formattedId}.`);
+    // ==================== CREATE EVENT FUNCTIONS ====================
+
+    function openModal() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('eventDate').min = today;
+        document.getElementById('createEventModal').style.display = 'flex';
+        loadMeetsForEventDropdown();
+    }
+
+    function closeModal() {
+        document.getElementById('createEventModal').style.display = 'none';
+        document.getElementById('eventTitle').value = '';
+        document.getElementById('eventDate').value = '';
+        document.getElementById('meetSelect').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('venue').value = '';
+        document.getElementById('minAge').value = '';
+        document.getElementById('maxAge').value = '';
+        document.getElementById('genderRestriction').value = '';
+        document.getElementById('minWeight').value = '';
+        document.getElementById('maxWeight').value = '';
+        document.getElementById('minHeight').value = '';
+        document.getElementById('maxHeight').value = '';
+        document.getElementById('photo').value = '';
+        document.getElementById('eventDateInfo').textContent = '';
+    }
+
+    async function loadMeetsForEventDropdown() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch('http://localhost:8080/api/meets/with-status', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) return;
+
+            const meets = await response.json();
+            const meetSelect = document.getElementById('meetSelect');
+            meetSelect.innerHTML = '<option value="">Select a meet</option>';
+
+            meetsData = {};
+            meets.forEach(meet => {
+                const option = document.createElement('option');
+                option.value = meet.name;
+                option.textContent = meet.name + ` (${meet.startDate} to ${meet.endDate})`;
+                meetSelect.appendChild(option);
+
+                meetsData[meet.name] = {
+                    startDate: meet.startDate,
+                    endDate: meet.endDate
+                };
+            });
+        } catch (error) {
+            console.error('Error loading meets:', error);
+        }
+    }
+
+    function updateEventDateBounds() {
+        const meetSelect = document.getElementById('meetSelect');
+        const eventDate = document.getElementById('eventDate');
+        const eventDateInfo = document.getElementById('eventDateInfo');
+        const selectedMeet = meetSelect.value;
+
+        if (selectedMeet && meetsData[selectedMeet]) {
+            const { startDate, endDate } = meetsData[selectedMeet];
+            eventDate.min = startDate;
+            eventDate.max = endDate;
+            eventDateInfo.textContent = `Valid dates: ${startDate} to ${endDate}`;
+            eventDateInfo.style.color = '#28a745';
+        } else {
+            eventDate.min = '';
+            eventDate.max = '';
+            eventDateInfo.textContent = '';
+        }
+    }
+
+    async function submitEvent(event) {
+        event.preventDefault();
+
+        const token = localStorage.getItem('token');
+
+        const minAge = document.getElementById('minAge').value;
+        const maxAge = document.getElementById('maxAge').value;
+
+        const eventDetails = {
+            eventName: document.getElementById('eventTitle').value,
+            category: document.getElementById('category').value,
+            eventDate: document.getElementById('eventDate').value,
+            meetName: document.getElementById('meetSelect').value,
+            location: document.getElementById('venue').value,
+            minAge: minAge ? parseInt(minAge) : null,
+            maxAge: maxAge ? parseInt(maxAge) : null,
+            genderRestriction: document.getElementById('genderRestriction').value || null,
+            minWeight: document.getElementById('minWeight').value ? parseInt(document.getElementById('minWeight').value) : null,
+            maxWeight: document.getElementById('maxWeight').value ? parseInt(document.getElementById('maxWeight').value) : null,
+            minHeight: document.getElementById('minHeight').value ? parseInt(document.getElementById('minHeight').value) : null,
+            maxHeight: document.getElementById('maxHeight').value ? parseInt(document.getElementById('maxHeight').value) : null
+        };
+
+        const imageFile = document.getElementById('photo').files[0];
+        if (!imageFile) {
+            alert("Please upload an image file.");
             return;
         }
 
-        const successMessage = await response.text();
-        console.log(`Successfully deleted meet: ${successMessage}`);
-        alert(`Meet ID: ${formattedId} deleted successfully.`);
+        const formData = new FormData();
+        formData.append('eventDTO', JSON.stringify(eventDetails));
+        formData.append('imageLink', imageFile);
 
-        // Reload the meets table
-        await loadMeets();
-    } catch (error) {
-        console.error('Error deleting meet:', error);
-        alert('An error occurred while deleting the meet. Please try again.');
-    }
-}
+        try {
+            const response = await fetch('http://localhost:8080/api/events/create', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
 
-
-  // Submit event creation form
-
-   async function submitEvent(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-    const token = localStorage.getItem('token'); // Get token from localStorage
-
-    // Prepare event details
-    const eventDetails = {
-        eventName: document.getElementById('eventTitle').value,
-        category: document.getElementById('category').value,
-        eventDate: document.getElementById('eventDate').value,
-        meetName: document.getElementById('meetSelect').value,
-        location: document.getElementById('venue').value
-    };
-
-    // Retrieve the file input
-    const imageFile = document.getElementById('photo').files[0];
-    if (!imageFile) {
-        alert("Please upload an image file.");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('eventDTO', JSON.stringify(eventDetails)); // Add event details as JSON
-    formData.append('imageLink', imageFile); // Append the file directly
-
-    try {
-        const response = await fetch('http://localhost:8080/api/events/create', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}` // Include token in the Authorization header
-            },
-            body: formData // Use FormData to send both JSON and file
-        });
-
-        if (!response.ok) {
             const errorMessage = await response.text();
-            throw new Error(errorMessage || 'Failed to create event');
+
+            if (!response.ok) {
+                throw new Error(errorMessage || 'Failed to create event');
+            }
+
+            alert('Event created successfully');
+            closeModal();
+            location.reload();
+        } catch (error) {
+            console.error('Error creating event:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    // ==================== LOAD MEETS ====================
+
+    async function loadMeets() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'Login.html';
+            return;
         }
 
-        alert('Event created successfully');
-        closeModal(); // Close the modal after success
-        location.reload(); // Reload the page
-    } catch (error) {
-        console.error('Error creating event:', error);
-        alert(`Error creating event: ${error.message}`);
+        try {
+            const response = await fetch('http://localhost:8080/api/meets/with-status', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) return;
+
+            const meets = await response.json();
+            const tableBody = document.querySelector('#meetsTable tbody');
+            tableBody.innerHTML = '';
+
+            meets.forEach((meet) => {
+                const displayId = `M_${String(meet.id).padStart(2, '0')}`;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${displayId}</td>
+                    <td>${meet.name}</td>
+                    <td>${meet.startDate}</td>
+                    <td>${meet.endDate}</td>
+                    <td><span class="badge bg-${meet.status === 'UPCOMING' ? 'info' : meet.status === 'ONGOING' ? 'success' : 'secondary'}">${meet.status}</span></td>
+                    <td><button class="delete-btn btn btn-sm btn-danger" data-meet-id="${displayId}">Cancel</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const displayId = e.target.getAttribute('data-meet-id');
+                    const rawId = displayId.replace(/^M_0*/, '');
+                    deleteMeet(rawId);
+                });
+            });
+        } catch (error) {
+            console.error('Error loading meets:', error);
+        }
     }
-}
 
-        // modal functions
+    async function deleteMeet(meetId) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'Login.html';
+            return;
+        }
 
-       function openModal() {
-           document.getElementById('createEventModal').style.display = 'flex';
-       }
+        const formattedId = `M_${String(meetId).padStart(2, '0')}`;
+        if (!confirm(`Are you sure you want to cancel Meet ID: ${formattedId}?`)) {
+            return;
+        }
 
-       function closeModal() {
-           document.getElementById('createEventModal').style.display = 'none';
-       }
+        try {
+            const response = await fetch(`http://localhost:8080/api/meets/delete?id=${meetId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
+            if (!response.ok) {
+                alert(`Failed to delete Meet ID: ${formattedId}.`);
+                return;
+            }
+
+            alert(`Meet ID: ${formattedId} deleted successfully.`);
+            await loadMeets();
+        } catch (error) {
+            console.error('Error deleting meet:', error);
+            alert('An error occurred while deleting the meet.');
+        }
+    }
 </script>
 </body>
 

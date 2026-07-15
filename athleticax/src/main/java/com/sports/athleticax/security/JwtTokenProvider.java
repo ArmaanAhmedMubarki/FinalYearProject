@@ -1,12 +1,12 @@
 package com.sports.athleticax.security;
-
-import io.jsonwebtoken.*;
+import io.github.cdimascio.dotenv.Dotenv;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -15,20 +15,33 @@ public class JwtTokenProvider {
     private final SecretKey secretKey;
     private final long expirationTime;
 
-    public JwtTokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration}") long expirationTime) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expirationTime = expirationTime;
+    public JwtTokenProvider(Dotenv dotenv) {
+
+        String secret = dotenv.get("JWT_KEY");
+        String expiration = dotenv.get("JWT_EXPIRATION");
+
+        if (secret == null || secret.isEmpty()) {
+            throw new RuntimeException("JWT_KEY is missing in .env file");
+        }
+
+        if (expiration == null || expiration.isEmpty()) {
+            throw new RuntimeException("JWT_EXPIRATION is missing in .env file");
+        }
+
+        this.secretKey = Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(secret)
+        );
+
+        this.expirationTime = Long.parseLong(expiration);
     }
 
     // Generate Token
     public String generateToken(String email) {
         return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(secretKey)
                 .compact();
     }
 
@@ -36,23 +49,25 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(secretKey)
+                    .verifyWith(secretKey)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
+
             return true;
-        } catch (JwtException e) {
+        } catch (Exception e) {
             System.out.println("Invalid token: " + e.getMessage());
             return false;
         }
     }
 
-    // Extract Username from Token
+    // Extract Email
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
+
         return claims.getSubject();
     }
 }

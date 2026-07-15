@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Completed Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-admin.css" rel="stylesheet">
+    <style>
+        .section-title {
+            font-size: 2.8rem;
+            color: #444;
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            animation: fadeInDown 1s ease;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* Responsive for tablets */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Responsive for mobile */
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(to bottom, #ffffff, #f7f7f7);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            animation: fadeInUp 1s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: #f5f5f5;
+            height: 280px;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card-image {
+            border: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-body h3 {
+            font-size: 1.7rem;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .card-body p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Button */
+        .card-body .btn-action {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #f9a826;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .card-body .btn-action:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* No events message */
+        .no-events-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background-color: #4A148C;
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        table thead th {
+            background-color: #4A148C;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">Admin</div>
+    <ul>
+        <li><a href="AdminHome.html">Home</a></li>
+        <li><a href="AdminEvent.html">Events</a></li>
+        <li><a href="CoachesForAdmin.html">Coaches</a></li>
+        <li><a href="AthletesForAdmin.html">Athletes</a></li>
+        <li><a href="AdminResult.html">Results</a></li>
+        <li><a href="AdminNews.html">News</a></li>
+        <li><a href="AdminProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container my-5">
+    <h1 class="section-title">Completed Events</h1>
+
+    <!-- Loader -->
+    <div class="text-center my-4" id="loader" style="display: none;">
+        <div class="loader"></div>
+        <p>Loading events...</p>
+    </div>
+
+    <!-- Events Container -->
+    <div class="card-grid" id="events-container">
+        <!-- Dynamic cards will be appended here -->
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div aria-hidden="true" aria-labelledby="resultsModalLabel" class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultsModalLabel">Results</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <h6 id="publishDate"></h6>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>SL No</th>
+                            <th>Athlete Name</th>
+                            <th>Score</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <!-- Results will be appended here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"></script>
+
+<script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCompletedEvents();
+    });
+
+    async function fetchCompletedEvents() {
+        const loader = document.getElementById('loader');
+        const eventsContainer = document.getElementById('events-container');
+        loader.style.display = 'block';
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8080/api/events', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const events = response.data;
+            const today = new Date().toISOString().split('T')[0];
+            const completedEvents = events.filter(event => event.eventDate < today);
+
+            eventsContainer.innerHTML = '';
+
+            if (completedEvents.length === 0) {
+                eventsContainer.innerHTML = '<div class="no-events-message" style="grid-column: 1/-1;">No completed events for now.</div>';
+            } else {
+                completedEvents.forEach(event => createEventCard(event));
+            }
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            eventsContainer.innerHTML = '<div class="no-events-message" style="grid-column: 1/-1; color: #dc3545;">Error loading events. Please try again later.</div>';
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function createEventCard(event) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const meetName = event.meet?.name || event.meetName || 'N/A';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <img src="data:image/jpeg;base64,${event.imageLink}" class="card-image" alt="Event Image">
+            </div>
+            <div class="card-body">
+                <h3>${event.eventName}</h3>
+                <p><strong>Category:</strong> ${event.category}</p>
+                <p><strong>Date:</strong> ${formatDate(event.eventDate)}</p>
+                <p><strong>Meet:</strong> ${meetName}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <button class="btn-action" onclick="viewResults(${event.id})">View Result</button>
+            </div>
+        `;
+
+        document.getElementById('events-container').appendChild(card);
+    }
+
+    async function viewResults(eventId) {
+        const token = localStorage.getItem('token');
+
+        try {
+            const resultsResponse = await axios.get(`http://localhost:8080/api/result/search?eventId=${eventId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const results = resultsResponse.data;
+            const publishDate = results[0]?.publishDate || "Unknown Date";
+            document.getElementById('publishDate').innerText = `Publish Date: ${formatDate(publishDate)}`;
+
+            const resultsTableBody = document.getElementById('resultsTableBody');
+            resultsTableBody.innerHTML = '';
+
+            for (let i = 0; i < results.length; i++) {
+                const result = results[i];
+
+                const athleteResponse = await axios.get(`http://localhost:8080/api/athlete/profile/search?id=${result.athleteId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const athlete = athleteResponse.data;
+
+                const row = `<tr>
+                    <td>${i + 1}</td>
+                    <td>${athlete.name}</td>
+                    <td>${result.score}</td>
+                    <td>${result.remarks}</td>
+                </tr>`;
+
+                resultsTableBody.insertAdjacentHTML('beforeend', row);
+            }
+
+            const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+            resultsModal.show();
+        } catch (error) {
+            console.error("Error fetching results:", error);
+            alert('Error loading results');
+        }
+    }
+</script>
+</body>
+</html>

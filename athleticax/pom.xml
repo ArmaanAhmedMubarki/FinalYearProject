@@ -51,6 +51,10 @@
             <version>0.12.6</version><!-- Latest stable version -->
         </dependency>
 		<dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
@@ -103,6 +107,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>5.2.2</version>
+</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

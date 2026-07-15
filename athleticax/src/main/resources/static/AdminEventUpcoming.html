@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Upcoming Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-admin.css" rel="stylesheet">
+    <style>
+        .section-title {
+            font-size: 2.8rem;
+            color: #444;
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            animation: fadeInDown 1s ease;
+        }
+
+        /* Page Header with Create Button */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header .section-title {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 0;
+        }
+
+        .btn-create-event {
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-create-event:hover {
+            background-color: #218838;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* Responsive for tablets */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Responsive for mobile */
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(to bottom, #ffffff, #f7f7f7);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            animation: fadeInUp 1s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: #f5f5f5;
+            height: 280px;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card-image {
+            border: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-body h3 {
+            font-size: 1.7rem;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .card-body p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Button */
+        .card-body .btn-action {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #f9a826;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .card-body .btn-action:hover {
+            background-color: #6A1B9A;
+            color: #f9a826;
+        }
+
+        .card-body .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .card-body .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Styles - Responsive */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-content label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus {
+            outline: none;
+            border-color: #4A148C;
+            box-shadow: 0 0 5px rgba(74, 20, 140, 0.3);
+        }
+
+        .date-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-actions button {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .form-actions .btn-submit {
+            background: #28a745;
+            color: white;
+        }
+
+        .form-actions .btn-submit:hover {
+            background: #218838;
+        }
+
+        .form-actions .btn-cancel {
+            background: #ccc;
+            color: black;
+        }
+
+        .form-actions .btn-cancel:hover {
+            background: #aaa;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">Admin</div>
+    <ul>
+        <li><a href="AdminHome.html">Home</a></li>
+        <li><a href="AdminEvent.html">Events</a></li>
+        <li><a href="CoachesForAdmin.html">Coaches</a></li>
+        <li><a href="AthletesForAdmin.html">Athletes</a></li>
+        <li><a href="AdminResult.html">Results</a></li>
+        <li><a href="AdminNews.html">News</a></li>
+        <li><a href="AdminProfile.html">Profile</a></li>
+        <li><a href="" onclick="logout()">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container my-5">
+    <div class="page-header">
+        <h1 class="section-title">Upcoming Events</h1>
+        <button class="btn-create-event" onclick="openCreateEventModal()">
+            <i class="bi bi-plus-circle"></i> Create Event
+        </button>
+    </div>
+
+    <!-- Loader -->
+    <div class="text-center my-4" id="loader" style="display: none;">
+        <div class="loader"></div>
+        <p>Loading events...</p>
+    </div>
+
+    <!-- Events Container -->
+    <div class="card-grid" id="events-container">
+        <!-- Dynamic cards will be appended here -->
+    </div>
+</div>
+
+<!-- Create Event Modal -->
+<div class="modal" id="createEventModal">
+    <div class="modal-content">
+        <h2>Create New Event</h2>
+        <form onsubmit="submitCreateEvent(event)">
+            <label for="createEventName">Event Name</label>
+            <input id="createEventName" placeholder="e.g., 100m Sprint" required type="text">
+
+            <label for="createCategory">Category</label>
+            <input id="createCategory" placeholder="e.g., Men's, Women's" required type="text">
+
+            <label for="createMeetName">Meet</label>
+            <select id="createMeetName" required onchange="updateCreateEventDateBounds()">
+                <option value="">-- Select a Meet --</option>
+            </select>
+            <div class="date-info" id="meetDateInfo"></div>
+
+            <label for="createEventDate">Event Date</label>
+            <input id="createEventDate" required type="date">
+            <div class="date-info" id="eventDateInfo"></div>
+
+            <label for="createLocation">Location</label>
+            <input id="createLocation" placeholder="e.g., Stadium Ground" required type="text">
+
+            <label for="createImage">Event Image</label>
+            <input id="createImage" required type="file" accept="image/*">
+
+            <div class="form-actions">
+                <button class="btn-submit" type="submit">Create Event</button>
+                <button class="btn-cancel" onclick="closeCreateEventModal()" type="button">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Event Modal -->
+<div class="modal" id="editEventModal">
+    <div class="modal-content">
+        <h2>Edit Event</h2>
+        <form onsubmit="submitEditEvent(event)">
+            <input id="editEventId" type="hidden">
+
+            <label for="editEventName">Event Name</label>
+            <input id="editEventName" required type="text">
+
+            <label for="editCategory">Category</label>
+            <input id="editCategory" required type="text">
+
+            <label for="editMeetName">Meet</label>
+            <select id="editMeetName" required onchange="updateEditEventDateBounds()">
+                <option value="">-- Select a Meet --</option>
+            </select>
+            <div class="date-info" id="editMeetDateInfo"></div>
+
+            <label for="editEventDate">Event Date</label>
+            <input id="editEventDate" required type="date">
+            <div class="date-info" id="editEventDateInfo"></div>
+
+            <label for="editLocation">Location</label>
+            <input id="editLocation" required type="text">
+
+            <hr style="margin: 20px 0; border-top: 2px solid #ddd;">
+            <h4 style="color: #4A148C; margin-bottom: 15px;">Eligibility Criteria (Optional)</h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label for="editMinAge">Minimum Age</label>
+                    <input id="editMinAge" type="number" min="1" max="120" placeholder="e.g., 18">
+                </div>
+                <div>
+                    <label for="editMaxAge">Maximum Age</label>
+                    <input id="editMaxAge" type="number" min="1" max="120" placeholder="e.g., 25">
+                </div>
+            </div>
+
+            <label for="editGenderRestriction" style="margin-top: 15px;">Gender Restriction</label>
+            <select id="editGenderRestriction">
+                <option value="">All</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div>
+                    <label for="editMinWeight">Minimum Weight (kg)</label>
+                    <input id="editMinWeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 50">
+                </div>
+                <div>
+                    <label for="editMaxWeight">Maximum Weight (kg)</label>
+                    <input id="editMaxWeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 80">
+                </div>
+                <div>
+                    <label for="editMinHeight">Minimum Height (cm)</label>
+                    <input id="editMinHeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 150">
+                </div>
+                <div>
+                    <label for="editMaxHeight">Maximum Height (cm)</label>
+                    <input id="editMaxHeight" type="number" min="1" max="300" step="0.5" placeholder="e.g., 200">
+                </div>
+            </div>
+
+            <hr style="margin: 20px 0; border-top: 2px solid #ddd;">
+
+            <label for="editImage">Event Image</label>
+            <input id="editImage" type="file" accept="image/*">
+
+            <div class="form-actions">
+                <button class="btn-submit" type="submit">Save Changes</button>
+                <button class="btn-cancel" onclick="closeEditEventModal()" type="button">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Registered Athletes Modal -->
+<div class="modal" id="registeredAthletesModal">
+    <div class="modal-content">
+        <h2>Registered Athletes</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Height (cm)</th>
+                    <th>Weight (kg)</th>
+                    <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody id="athletesTableBody">
+                <!-- Athlete rows will be appended dynamically -->
+            </tbody>
+        </table>
+        <div class="form-actions">
+            <button class="btn-cancel" style="flex: 1;" onclick="closeRegisteredAthletesModal()" type="button">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"></script>
+
+<script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    let meetsData = {};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchEvents();
+        loadMeetsForDropdown('createMeetName');
+        loadMeetsForDropdown('editMeetName');
+    });
+
+    // ==================== CREATE EVENT FUNCTIONS ====================
+
+    function openCreateEventModal() {
+        document.getElementById('createEventModal').classList.add('show');
+    }
+
+    function closeCreateEventModal() {
+        document.getElementById('createEventModal').classList.remove('show');
+        document.getElementById('createEventName').value = '';
+        document.getElementById('createCategory').value = '';
+        document.getElementById('createMeetName').value = '';
+        document.getElementById('createEventDate').value = '';
+        document.getElementById('createLocation').value = '';
+        document.getElementById('createImage').value = '';
+    }
+
+    async function loadMeetsForDropdown(selectId) {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await axios.get('http://localhost:8080/api/meets/with-status', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const meets = response.data;
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">-- Select a Meet --</option>';
+
+            meetsData = {};
+            meets.forEach(meet => {
+                const option = document.createElement('option');
+                option.value = meet.name;
+                option.textContent = meet.name + ` (${meet.startDate} to ${meet.endDate})`;
+                select.appendChild(option);
+
+                meetsData[meet.name] = {
+                    startDate: meet.startDate,
+                    endDate: meet.endDate
+                };
+            });
+        } catch (error) {
+            console.error('Error loading meets:', error);
+        }
+    }
+
+    function updateCreateEventDateBounds() {
+        const meetSelect = document.getElementById('createMeetName');
+        const eventDate = document.getElementById('createEventDate');
+        const meetDateInfo = document.getElementById('meetDateInfo');
+        const selectedMeet = meetSelect.value;
+
+        if (selectedMeet && meetsData[selectedMeet]) {
+            const { startDate, endDate } = meetsData[selectedMeet];
+            eventDate.min = startDate;
+            eventDate.max = endDate;
+            meetDateInfo.textContent = `Valid dates: ${startDate} to ${endDate}`;
+            meetDateInfo.style.color = '#28a745';
+        } else {
+            eventDate.min = '';
+            eventDate.max = '';
+            meetDateInfo.textContent = '';
+        }
+    }
+
+    function updateEditEventDateBounds() {
+        const meetSelect = document.getElementById('editMeetName');
+        const eventDate = document.getElementById('editEventDate');
+        const meetDateInfo = document.getElementById('editMeetDateInfo');
+        const selectedMeet = meetSelect.value;
+
+        if (selectedMeet && meetsData[selectedMeet]) {
+            const { startDate, endDate } = meetsData[selectedMeet];
+            eventDate.min = startDate;
+            eventDate.max = endDate;
+            meetDateInfo.textContent = `Valid dates: ${startDate} to ${endDate}`;
+            meetDateInfo.style.color = '#28a745';
+        } else {
+            eventDate.min = '';
+            eventDate.max = '';
+            meetDateInfo.textContent = '';
+        }
+    }
+
+    async function submitCreateEvent(event) {
+        event.preventDefault();
+
+        const token = localStorage.getItem('token');
+        const eventDetails = {
+            eventName: document.getElementById('createEventName').value,
+            category: document.getElementById('createCategory').value,
+            eventDate: document.getElementById('createEventDate').value,
+            meetName: document.getElementById('createMeetName').value,
+            location: document.getElementById('createLocation').value
+        };
+
+        const imageFile = document.getElementById('createImage').files[0];
+        if (!imageFile) {
+            alert('Please upload an image file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('eventDTO', JSON.stringify(eventDetails));
+        formData.append('imageLink', imageFile);
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/events/create', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            alert('Event created successfully!');
+            closeCreateEventModal();
+            fetchEvents();
+        } catch (error) {
+            console.error('Error creating event:', error);
+            const errorMsg = error.response?.data || error.message;
+            alert(`Error: ${errorMsg}`);
+        }
+    }
+
+    // ==================== EDIT EVENT FUNCTIONS ====================
+
+    function openEditEventModal(eventId) {
+        const token = localStorage.getItem('token');
+        axios.get(`http://localhost:8080/api/events/search?id=${eventId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        }).then(response => {
+            const event = response.data;
+            document.getElementById('editEventId').value = eventId;
+            document.getElementById('editEventName').value = event.eventName || '';
+            document.getElementById('editCategory').value = event.category || '';
+            document.getElementById('editEventDate').value = event.eventDate || '';
+            document.getElementById('editLocation').value = event.location || '';
+            document.getElementById('editMeetName').value = event.meet?.name || '';
+
+            document.getElementById('editMinAge').value = event.minAge || '';
+            document.getElementById('editMaxAge').value = event.maxAge || '';
+            document.getElementById('editGenderRestriction').value = event.genderRestriction || '';
+            document.getElementById('editMinWeight').value = event.minWeight || '';
+            document.getElementById('editMaxWeight').value = event.maxWeight || '';
+            document.getElementById('editMinHeight').value = event.minHeight || '';
+            document.getElementById('editMaxHeight').value = event.maxHeight || '';
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('editEventDate').min = today;
+
+            updateEditEventDateBounds();
+            document.getElementById('editEventModal').classList.add('show');
+        }).catch(error => {
+            console.error('Error fetching event:', error);
+            alert('Could not load event details');
+        });
+    }
+
+    function closeEditEventModal() {
+        document.getElementById('editEventModal').classList.remove('show');
+        document.getElementById('editEventId').value = '';
+        document.getElementById('editEventName').value = '';
+        document.getElementById('editCategory').value = '';
+        document.getElementById('editEventDate').value = '';
+        document.getElementById('editLocation').value = '';
+        document.getElementById('editMeetName').value = '';
+        document.getElementById('editMinAge').value = '';
+        document.getElementById('editMaxAge').value = '';
+        document.getElementById('editGenderRestriction').value = '';
+        document.getElementById('editMinWeight').value = '';
+        document.getElementById('editMaxWeight').value = '';
+        document.getElementById('editMinHeight').value = '';
+        document.getElementById('editMaxHeight').value = '';
+        document.getElementById('editImage').value = '';
+    }
+
+    async function submitEditEvent(event) {
+        event.preventDefault();
+
+        const token = localStorage.getItem('token');
+        const eventId = document.getElementById('editEventId').value;
+
+        const minAge = document.getElementById('editMinAge').value;
+        const maxAge = document.getElementById('editMaxAge').value;
+
+        const eventDetails = {
+            id: eventId,
+            eventName: document.getElementById('editEventName').value,
+            category: document.getElementById('editCategory').value,
+            eventDate: document.getElementById('editEventDate').value,
+            meetName: document.getElementById('editMeetName').value,
+            location: document.getElementById('editLocation').value,
+            minAge: minAge ? parseInt(minAge) : null,
+            maxAge: maxAge ? parseInt(maxAge) : null,
+            genderRestriction: document.getElementById('editGenderRestriction').value || null,
+            minWeight: document.getElementById('editMinWeight').value ? parseInt(document.getElementById('editMinWeight').value) : null,
+            maxWeight: document.getElementById('editMaxWeight').value ? parseInt(document.getElementById('editMaxWeight').value) : null,
+            minHeight: document.getElementById('editMinHeight').value ? parseInt(document.getElementById('editMinHeight').value) : null,
+            maxHeight: document.getElementById('editMaxHeight').value ? parseInt(document.getElementById('editMaxHeight').value) : null
+        };
+
+        const imageFile = document.getElementById('editImage').files[0];
+        const formData = new FormData();
+        formData.append('eventDTO', JSON.stringify(eventDetails));
+
+        if (imageFile) {
+            formData.append('imageLink', imageFile);
+        } else {
+            formData.append('imageLink', new File([], ''));
+        }
+
+        try {
+            const response = await axios.put('http://localhost:8080/api/events/update', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            alert('Event updated successfully!');
+            closeEditEventModal();
+            fetchEvents();
+        } catch (error) {
+            console.error('Error updating event:', error);
+            const errorMsg = error.response?.data || error.message;
+            alert(`Error: ${errorMsg}`);
+        }
+    }
+
+    // ==================== FETCH AND DISPLAY EVENTS ====================
+
+    async function fetchEvents() {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8080/api/events', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const events = response.data;
+            const today = new Date().toISOString().split('T')[0];
+            const eventsContainer = document.getElementById('events-container');
+
+            eventsContainer.innerHTML = '';
+
+            const upcomingEvents = events.filter(event => event.eventDate > today);
+
+            if (upcomingEvents.length === 0) {
+                eventsContainer.innerHTML = '<div class="text-center"><h5>No upcoming events for now.</h5></div>';
+            } else {
+                upcomingEvents.forEach(event => createEventCard(event));
+            }
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            document.getElementById('events-container').innerHTML = '<div class="text-center text-danger"><h5>Error loading events.</h5></div>';
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function createEventCard(event) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const meetName = event.meet?.name || 'N/A';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <img src="data:image/jpeg;base64,${event.imageLink}" class="card-image" alt="Event Image">
+            </div>
+            <div class="card-body">
+                <h3>${event.eventName}</h3>
+                <p><strong>Category:</strong> ${event.category}</p>
+                <p><strong>Date:</strong> ${formatDate(event.eventDate)}</p>
+                <p><strong>Meet:</strong> ${meetName}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <button class="btn-action" onclick="openEditEventModal(${event.id})">Edit</button>
+                <button class="btn-action btn-danger" onclick="deleteEvent(${event.id})">Cancel</button>
+                <button class="btn-action" onclick="showRegisteredAthletes(${event.id})">Registrations</button>
+            </div>
+        `;
+
+        document.getElementById('events-container').appendChild(card);
+    }
+
+    async function deleteEvent(eventId) {
+        if (!confirm('Are you sure you want to cancel this event?')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete('http://localhost:8080/api/events/delete', {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { id: eventId }
+            });
+
+            alert('Event deleted successfully!');
+            fetchEvents();
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            alert('Error deleting event');
+        }
+    }
+
+    async function showRegisteredAthletes(eventId) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/registration/search?eventId=${eventId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const registrations = response.data;
+            const approvedAthletes = registrations.filter(reg => reg.status === 'APPROVED');
+            const athletesTableBody = document.getElementById('athletesTableBody');
+
+            athletesTableBody.innerHTML = '';
+
+            if (approvedAthletes.length === 0) {
+                athletesTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No athletes registered</td></tr>';
+            } else {
+                for (const reg of approvedAthletes) {
+                    const athleteResponse = await axios.get(`http://localhost:8080/api/athlete/profile/search?id=${reg.athleteId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
+                    const athlete = athleteResponse.data;
+                    const age = calculateAge(athlete.birthDate);
+
+                    const row = `<tr>
+                        <td>${athlete.name}</td>
+                        <td>${age}</td>
+                        <td>${athlete.height}</td>
+                        <td>${athlete.weight}</td>
+                        <td>${athlete.gender}</td>
+                    </tr>`;
+
+                    athletesTableBody.insertAdjacentHTML('beforeend', row);
+                }
+            }
+
+            document.getElementById('registeredAthletesModal').classList.add('show');
+        } catch (error) {
+            console.error('Error fetching athletes:', error);
+            alert('Error loading registered athletes');
+        }
+    }
+
+    function closeRegisteredAthletesModal() {
+        document.getElementById('registeredAthletesModal').classList.remove('show');
+    }
+
+    function calculateAge(birthDate) {
+        const birth = new Date(birthDate);
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    }
+</script>
+</body>
+</html>

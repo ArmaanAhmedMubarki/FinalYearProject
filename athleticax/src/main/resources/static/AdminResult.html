@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-admin.css" rel="stylesheet">
+    <style>
+        .highlight {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+        .spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        .horizontal-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+        .event-image {
+            flex-shrink: 0;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+}
+
+        .card-content {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .card-content h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .card-content p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .card-button {
+            flex-shrink: 0;
+        }
+
+        .card-button button {
+            padding: 10px 20px;
+            background-color: #4A148C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card-button button:hover {
+            background-color: #6A1B9A;
+             color: #f9a826;
+        }
+        h2{
+        font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">Admin</div>
+    <ul>
+        <li><a href="AdminHome.html">Home</a></li>
+        <li><a href="AdminEvent.html">Events</a></li>
+        <li><a href="CoachesForAdmin.html">Coaches</a></li>
+        <li><a href="AthletesForAdmin.html">Athletes</a></li>
+        <li><a href="AdminResult.html">Results</a></li>
+        <li><a href="AdminNews.html">News</a></li>
+        <li><a href="AdminProfile.html">Profile</a></li>
+        <li><a href="" id="logoutButton">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Event Results</h2>
+    </div>
+    <div class="row" id="cards-container"></div>
+    <div class="text-center mt-3" id="showMoreContainer" style="display: none;">
+        <button class="btn btn-secondary" id="showMoreButton">Show More</button>
+    </div>
+    <div class="text-center mt-5" id="noResultsMessage" style="display: none;">
+        <p>No results to show.</p>
+    </div>
+</div>
+
+<div aria-hidden="true" aria-labelledby="resultsModalLabel" class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultsModalLabel">Results</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>SlNo</th>
+                        <th>Athlete Name</th>
+                        <th>Score</th>
+                        <th>Remarks</th>
+                    </tr>
+                    </thead>
+                    <tbody id="modal-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"></script>
+<script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('roleId');
+    const cardsContainer = document.getElementById('cards-container');
+    const modalTableBody = document.getElementById('modal-table-body');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const showMoreContainer = document.getElementById('showMoreContainer');
+    const showMoreButton = document.getElementById('showMoreButton');
+    const logoutButton = document.getElementById('logoutButton');
+
+    let showAll = false;
+
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('roleId');
+        window.location.href = '/login';
+    });
+
+    async function fetchResults() {
+        const response = await fetch('http://localhost:8080/api/result/all', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.json();
+    }
+
+    async function fetchEventDetails(eventId) {
+        const response = await fetch(`http://localhost:8080/api/events/search?id=${eventId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.json();
+    }
+
+    async function fetchAthleteDetails(athleteId) {
+        const response = await fetch(`http://localhost:8080/api/athlete/profile/search?id=${athleteId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.json();
+    }
+
+    async function loadCards() {
+        cardsContainer.innerHTML = '<div class="spinner"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+        const results = await fetchResults();
+        if (!results || results.length === 0) {
+            cardsContainer.innerHTML = '';
+            noResultsMessage.style.display = 'block';
+            return;
+        }
+
+        const groupedResults = results.reduce((acc, result) => {
+            if (!acc[result.eventId]) acc[result.eventId] = [];
+            acc[result.eventId].push(result);
+            return acc;
+        }, {});
+
+        const currentDate = new Date();
+        const eventIds = Object.keys(groupedResults);
+        const recentEventIds = eventIds.filter(eventId => {
+            const publishDate = new Date(groupedResults[eventId][0].publishDate);
+            return currentDate - publishDate <= 365 * 24 * 60 * 60 * 1000; // One year in milliseconds
+        });
+
+        const visibleEvents = showAll ? eventIds : recentEventIds;
+
+        cardsContainer.innerHTML = '';
+        for (const eventId of visibleEvents) {
+            const group = groupedResults[eventId];
+            const eventDetails = await fetchEventDetails(eventId);
+            const card = document.createElement('div');
+            card.className = 'col-12 mb-4';
+            card.innerHTML = `
+    <div class="horizontal-card">
+    <img src="data:image/png;base64,${eventDetails.imageLink}" alt="Event Image" class="event-image">
+    <div class="card-content">
+        <h5>${eventDetails.eventName}</h5>
+        <p>
+            <strong>Event Date:</strong> ${formatDate(eventDetails.eventDate)}<br>
+            <strong>Category:</strong> ${eventDetails.category}<br>
+            <strong>Meet Name:</strong> ${eventDetails.meetName}<br>
+            <strong>Location:</strong> ${eventDetails.location}<br>
+            <strong>Publish Date:</strong> ${formatDate(group[0].publishDate)}
+        </p>
+    </div>
+    <div class="card-button">
+        <button onclick="showModal(${eventId}, ${JSON.stringify(group).replace(/"/g, '&quot;')})">View Results</button>
+    </div>
+</div>
+
+`;
+            cardsContainer.appendChild(card);
+        }
+
+        if (!showAll && eventIds.length > recentEventIds.length) {
+            showMoreContainer.style.display = 'block';
+        } else {
+            showMoreContainer.style.display = 'none';
+        }
+    }
+
+    async function showModal(eventId, group) {
+        modalTableBody.innerHTML = '';
+
+        for (let i = 0; i < group.length; i++) {
+            const result = group[i];
+            const athlete = await fetchAthleteDetails(result.athleteId);
+            const isCurrentAthlete = result.athleteId === parseInt(roleId, 10);
+
+            const row = document.createElement('tr');
+row.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${athlete.name}</td>
+                <td>${result.score}</td>
+                <td>${result.remarks}</td>
+            `;
+            modalTableBody.appendChild(row);
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
+        modal.show();
+    }
+
+    showMoreButton.addEventListener('click', () => {
+        showAll = true;
+        loadCards();
+    });
+
+    loadCards();
+</script>
+</body>
+</html>

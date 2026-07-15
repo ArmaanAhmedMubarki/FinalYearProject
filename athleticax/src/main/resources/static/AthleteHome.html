@@ -30,11 +30,10 @@
             font-size: 1rem; /* Consistent text size */
         }
 
-        .navbar .logo {
-            font-size: 1.5rem;
+       .navbar .logo {
+            font-size: 2.0rem;
             font-weight: bold;
             color: #f9a826;
-            text-transform: uppercase;
         }
 
         .navbar ul {
@@ -148,7 +147,7 @@
 </head>
 <body>
 <nav class="navbar">
-    <div class="logo">ATHLETE</div>
+    <div class="logo">Athlete</div>
     <ul>
         <li><a href="AthleteHome.html">Home</a></li>
         <li><a href="AthleteEvent.html">Events</a></li>
@@ -200,7 +199,7 @@
 </section>
 <!-- Footer -->
 <footer>
-    <p>&copy; 2025 Sports Management Platform. All rights reserved.</p>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
 </footer>
 <script crossorigin="anonymous"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
@@ -209,6 +208,33 @@
 <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="TokenCheck.js"></script>
 <script>
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
 
     async function loadWelcomeMessage() {
         const welcomeHeading = document.getElementById("welcome-heading");
@@ -306,9 +332,9 @@
         <img src="${imageSrc}" alt="Event Image">
         <div class="horizontal-card-content">
             <h4>${eventDetails?.eventName || 'Unknown Event'}</h4>
-            <p>Registration Date: ${new Date(reg.registrationDate).toLocaleDateString()}</p>
+            <p>Registration Date: ${formatDate(reg.registrationDate)}</p>
             <p>Current Status: ${reg.status}</p>
-            <p>Event Date: ${new Date(eventDetails?.eventDate).toLocaleDateString()}</p>
+            <p>Event Date: ${formatDate(eventDetails?.eventDate)}</p>
             <p>Location: ${eventDetails?.location || 'N/A'}</p>
         </div>
     `;

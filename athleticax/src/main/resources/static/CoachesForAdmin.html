@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Coaches</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="unified-styles-admin.css" rel="stylesheet">
+    <style>
+       .card {
+            background-color: #e8e3f7; /* Light purple */
+            border: 1px solid #d4c9f0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            object-fit: cover;
+        }
+
+        .card .card-body span {
+            display: block;
+            color: #4a3c71;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .card-body strong {
+            color: #2f244d;
+        }
+    </style>
+</head>
+<body>
+<!-- Admin Navigation Bar -->
+<header class="navbar">
+    <div class="logo">Admin</div>
+    <nav>
+        <ul class="nav-links">
+            <li><a href="AdminHome.html">Home</a></li>
+            <li><a href="AdminEvent.html">Events</a></li>
+            <li><a href="CoachesForAdmin.html">Coaches</a></li>
+            <li><a href="AthletesForAdmin.html">Athletes</a></li>
+            <li><a href="AdminResult.html">Results</a></li>
+            <li><a href="AdminNews.html">News</a></li>
+            <li><a href="AdminProfile.html">Profile</a></li>
+            <li><a href="" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="container my-5">
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <input class="form-control" id="searchInput" oninput="filterCoaches()" placeholder="Search by name"
+                   type="text">
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="categoryFilter" onchange="filterCoaches()">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="genderFilter" onchange="filterCoaches()">
+                <option value="">All Genders</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Coaches Cards Section -->
+    <div class="row g-4" id="coachesContainer"></div>
+</div>
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
+</footer>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"></script>
+<script>
+    const API_URL = "http://localhost:8080/api/coach";
+    const BEARER_TOKEN = localStorage.getItem("token");
+    let coaches = [];
+
+    window.onload = async function () {
+        try {
+            const response = await fetch(API_URL, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${BEARER_TOKEN}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            coaches = await response.json();
+
+            populateCategoryFilter();
+            renderCoaches(coaches);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+
+        try {
+            let date;
+
+            // Try to parse different date formats and convert to dd/mm/yyyy
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                // Already in dd/mm/yyyy format
+                return dateString;
+            } else if (dateString.includes('T')) {
+                // ISO format (2002-06-29T00:00:00)
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                // Ambiguous format - try MM/DD/YYYY first
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                // YYYY-MM-DD format
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                // Try generic parsing
+                date = new Date(dateString);
+            }
+
+            // Validate date
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+
+            // Format as dd/mm/yyyy
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    function formatImage(imageLink) {
+        // 1. If there is no imageLink at all, return the placeholder
+        if (!imageLink || imageLink.trim() === "") {
+            return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' font-size='14' fill='%23999' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
+        }
+
+        // 2. If it already includes the data URI prefix, use it directly
+        if (imageLink.startsWith("data:image/")) {
+            return imageLink;
+        }
+
+        // 3. Otherwise, treat it as raw Base64 and append the prefix
+        return `data:image/jpeg;base64,${imageLink}`;
+    }
+
+    function renderCoaches(data) {
+        const container = document.getElementById("coachesContainer");
+        container.innerHTML = ""; // Clear the container
+
+        if (data.length === 0) {
+            container.innerHTML = '<div class="col-12 text-center text-muted">No coaches found.</div>';
+            return;
+        }
+
+        data.forEach((coach) => {
+            const card = document.createElement("div");
+            card.className = "col-md-6";
+
+            const birthDate = formatDate(coach.birthDate);
+            const imageUrl = formatImage(coach.imageLink);
+
+            card.innerHTML = `
+                <div class="card d-flex flex-row">
+                    <img src="${imageUrl}" alt="${coach.name || "Coach's image"}" class="img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    <div class="card-body">
+                        <span><strong>Name:</strong> ${coach.name || "N/A"}</span>
+                        <span><strong>Category:</strong> ${coach.category || "N/A"}</span>
+                        <span><strong>Gender:</strong> ${coach.gender || "N/A"}</span>
+                        <span><strong>Birth Date:</strong> ${birthDate}</span>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    function populateCategoryFilter() {
+        const categories = [...new Set(coaches.map((coach) => coach.category).filter(Boolean))];
+        const categoryFilter = document.getElementById("categoryFilter");
+
+        categories.forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+        });
+    }
+
+    function filterCoaches() {
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
+        const selectedCategory = document.getElementById("categoryFilter").value;
+        const selectedGender = document.getElementById("genderFilter").value;
+
+        const filteredCoaches = coaches.filter((coach) => {
+            const matchesName = coach.name.toLowerCase().includes(searchInput);
+            const matchesCategory = selectedCategory ? coach.category === selectedCategory : true;
+            const matchesGender = selectedGender
+            ? (coach.gender || "").toLowerCase() === selectedGender.toLowerCase()
+            : true;
+
+            return matchesName && matchesCategory && matchesGender;
+        });
+
+        renderCoaches(filteredCoaches);
+    }
+</script>
+</body>
+</html>
