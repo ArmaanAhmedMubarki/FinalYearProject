@@ -15,10 +15,10 @@ RUN chmod +x mvnw
 # Download dependencies
 RUN ./mvnw dependency:go-offline
 
-# Copy source
+# Copy Spring source
 COPY athleticax/src src
 
-# Build project
+# Build application
 RUN ./mvnw clean package -DskipTests
 
 
@@ -36,13 +36,17 @@ RUN apt-get update && \
 
 # Create virtual environment
 RUN python3 -m venv /opt/venv
-
-# Use the virtual environment
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install dependencies
+# Copy Spring Boot jar
+COPY --from=builder /app/target/*.jar app.jar
+
+# Copy ML model folder
+COPY ml-model ./ml-model
+
+# Install Python dependencies
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r ./ml-model/requirements.txt
+    pip install --no-cache-dir -r ml-model/requirements.txt
 
 EXPOSE 8080
 
