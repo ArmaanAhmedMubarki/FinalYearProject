@@ -1,14 +1,14 @@
 # ==========================
-# STAGE 1 : Build Spring Boot
+# Stage 1 - Build Spring Boot
 # ==========================
-FROM eclipse-temurin:21-jdk AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom
-COPY athleticax/.mvn .mvn
-COPY athleticax/mvnw .
-COPY athleticax/pom.xml .
+# Copy Maven wrapper
+COPY .mvn .mvn
+COPY mvnw .
+COPY pom.xml .
 
 RUN chmod +x mvnw
 
@@ -16,16 +16,16 @@ RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline
 
 # Copy source
-COPY athleticax/src src
+COPY src src
 
-# Build application
+# Build project
 RUN ./mvnw clean package -DskipTests
 
 
 # ==========================
-# STAGE 2 : Runtime
+# Stage 2 - Runtime
 # ==========================
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 
 # Install Python
 RUN apt-get update && \
@@ -38,12 +38,11 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
 # Copy ML model folder
-COPY ml-model ./ml-model
+COPY ../ml-model ./ml-model
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r ml-model/requirements.txt
+RUN pip3 install --no-cache-dir -r ./ml-model/requirements.txt
 
-# Railway/Render port
 EXPOSE 8080
 
 ENTRYPOINT ["java","-jar","app.jar"]
