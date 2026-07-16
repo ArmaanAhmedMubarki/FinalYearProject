@@ -40,8 +40,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email already registered");
         }
 
-        otpService.sendOtp(request.getEmail());
-
         try {
             otpService.sendOtp(request.getEmail());
             return ResponseEntity.ok("OTP sent successfully");
