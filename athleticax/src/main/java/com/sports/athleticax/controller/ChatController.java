@@ -45,15 +45,20 @@ public class ChatController {
             // =====================================================
             // SAVE TO A REAL STABLE FOLDER (NOT TOMCAT TEMP)
             // =====================================================
-            String uploadFolder = "C:/Users/User/Desktop/uploads";
-            File uploadDir = new File(uploadFolder);
+            String uploadFolder = System.getProperty("java.io.tmpdir")
+        + File.separator
+        + "uploads";
 
+            File uploadDir = new File(uploadFolder);
+            
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
-
-            Path savedPath = Paths.get(uploadFolder, originalFilename);
-
+            
+            String filename = System.currentTimeMillis() + "_" + originalFilename;
+            
+            Path savedPath = Paths.get(uploadFolder, filename);
+            
             Files.copy(
                     file.getInputStream(),
                     savedPath,
