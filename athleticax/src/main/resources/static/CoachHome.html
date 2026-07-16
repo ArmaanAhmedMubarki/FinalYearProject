@@ -3,37 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coach Home</title>
-
+    <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <style>
-
         body, html {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-        }
-
-        /* NAVBAR */
-
+             margin: 0;
+             padding: 0;
+             min-height: 100vh;
+             display: flex;
+             flex-direction: column;
+             font-family: Arial, sans-serif;
+         }
+        /* Navbar styles */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: #4A148C;
             padding: 0 20px;
-            height: 70px;
-            color: white;
+            height: 70px; /* Consistent height */
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1rem; /* Consistent text size */
         }
 
-        .logo {
-            font-size: 1.5rem;
+        .navbar .logo {
+            font-size: 2.0rem;
             font-weight: bold;
             color: #f9a826;
         }
@@ -45,348 +41,254 @@
             margin: 0;
         }
 
+        .navbar ul li {
+            display: inline;
+        }
+
         .navbar ul li a {
             text-decoration: none;
-            color: white;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
             padding: 10px 15px;
             border-radius: 5px;
-            transition: 0.3s;
         }
 
         .navbar ul li a:hover {
             background-color: #6A1B9A;
             color: #f9a826;
         }
+         footer {
+             text-align: center;
+             padding: 15px 0;
+             background-color: #4A148C;
+             color: #fff;
+         }
+         footer p {
+             margin: 0;
+             font-size: 0.9rem;
+         }
 
-        /* MAIN SECTION */
+         #main-section {
+             flex: 1;
+             padding: 20px;
+             background-color: #f4f4f9;
+         }
 
-        #main-section {
-            flex: 1;
-            padding: 20px;
-        }
+         .athlete-card {
+             display: flex;
+             align-items: center;
+             border: 1px solid #ccc;
+             border-radius: 10px;
+             overflow: hidden;
+             margin-bottom: 20px;
+             background-color: #fff;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+         }
 
-        /* ATHLETE CARD */
+         .athlete-card img {
+             width: 150px;
+             height: 150px;
+             object-fit: cover;
+         }
 
-        .athlete-card {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+         .athlete-details {
+             padding: 15px;
+             flex: 1;
+         }
 
-        .athlete-card img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
+         .athlete-details h3 {
+             margin: 0;
+             color: #4A148C;
+         }
 
-        .athlete-details {
-            padding: 15px;
-            flex: 1;
-        }
+         .athlete-details p {
+             margin: 5px 0;
+         }
 
-        .athlete-details h3 {
-            margin: 0;
-            color: #4A148C;
-        }
+         .no-data {
+             text-align: center;
+             color: #888;
+             margin-top: 50px;
+         }
 
-        /* ACTION CARDS */
+        .event-card {
+             text-align: left;
+             transition: transform 0.3s ease;
+         }
 
-        .action-card {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: 0.3s;
-            width: 250px;
-            height: 200px;
-        }
+         .event-card:hover {
+             transform: translateY(-5px);
+         }
 
-        .action-card:hover {
-            transform: translateY(-10px);
-        }
+         .action-card {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             flex: 1;
+             text-align: center;
+             padding: 30px;
+             border: 1px solid #ccc;
+             border-radius: 15px;
+             cursor: pointer;
+             transition: transform 0.3s ease, background-color 0.3s ease;
+             color: white;
+             height: 300px; /* Ensure enough height for proper centering */
+         }
 
-        /* FOOTER */
-
-        footer {
-            text-align: center;
-            padding: 15px 0;
-            background-color: #4A148C;
-            color: white;
-        }
-
-        /* ========================= */
+         .action-card:hover {
+             transform: translateY(-10px);
+         }
+         /* ========================= */
         /* CHATBOT */
         /* ========================= */
 
-        .chatbot-button {
-
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-
-            width: 70px;
-            height: 70px;
-
-            border-radius: 50%;
-            border: none;
-
-            background-color: #4A148C;
-            color: white;
-
-            font-size: 30px;
-
-            cursor: pointer;
-
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-
-            z-index: 9999;
-
-            transition: 0.3s;
+        .chatbot-button{
+            position:fixed;
+            bottom:25px;
+            right:25px;
+            width:70px;
+            height:70px;
+            border-radius:50%;
+            border:none;
+            background:#4A148C;
+            color:white;
+            font-size:30px;
+            cursor:pointer;
+            z-index:9999;
+            box-shadow:0 4px 12px rgba(0,0,0,.3);
+            transition:.3s;
         }
 
-        .chatbot-button:hover {
-            transform: scale(1.1);
-            background-color: #6A1B9A;
+        .chatbot-button:hover{
+            transform:scale(1.1);
         }
 
-        .chatbot-container {
-
-            position: fixed;
-
-            bottom: 110px;
-            right: 25px;
-
-            width: 350px;
-            height: 500px;
-
-            background: white;
-
-            border-radius: 15px;
-
-            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-
-            display: none;
-
-            flex-direction: column;
-
-            overflow: hidden;
-
-            z-index: 9999;
+        .chatbot-container{
+            position:fixed;
+            bottom:110px;
+            right:25px;
+            width:360px;
+            height:520px;
+            background:white;
+            display:none;
+            flex-direction:column;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 6px 18px rgba(0,0,0,.3);
+            z-index:9999;
         }
 
-        .chatbot-header {
-
-            background-color: #4A148C;
-            color: white;
-
-            padding: 15px;
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .chatbot-header{
+            background:#4A148C;
+            color:white;
+            padding:15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         }
 
-        .chatbot-header h5 {
-            margin: 0;
+        .close-chat{
+            cursor:pointer;
+            font-size:22px;
         }
 
-        .close-chat {
-            cursor: pointer;
-            font-size: 22px;
+        #chatBox{
+            flex:1;
+            overflow-y:auto;
+            padding:15px;
+            background:#f9f9f9;
         }
 
-        #chatBox {
-
-            flex: 1;
-
-            padding: 15px;
-
-            overflow-y: auto;
-
-            background: #f9f9f9;
+        .user-message{
+            background:#4A148C;
+            color:white;
+            padding:10px;
+            border-radius:10px;
+            margin-bottom:10px;
+            width:fit-content;
+            max-width:80%;
+            margin-left:auto;
         }
 
-        .user-message {
-
-            background: #4A148C;
-            color: white;
-
-            padding: 10px;
-            border-radius: 10px;
-
-            margin-bottom: 10px;
-
-            width: fit-content;
-            max-width: 80%;
-
-            margin-left: auto;
+        .ai-message{
+            background:#ececec;
+            padding:10px;
+            border-radius:10px;
+            margin-bottom:10px;
+            max-width:90%;
         }
 
-        .ai-message {
-
-            background: #eaeaea;
-
-            padding: 10px;
-
-            border-radius: 10px;
-
-            margin-bottom: 10px;
-
-            width: fit-content;
-            max-width: 80%;
+        .chat-input-container{
+            border-top:1px solid #ccc;
+            padding:10px;
         }
 
-        .chat-input-container {
-
-            display: flex;
-
-            padding: 10px;
-
-            border-top: 1px solid #ccc;
-
-            background: white;
-        }
-
-        #chatInput {
-
-            flex: 1;
-
-            padding: 10px;
-
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .send-btn {
-
-            margin-left: 10px;
-
-            border: none;
-
-            background-color: #4A148C;
-
-            color: white;
-
-            padding: 10px 15px;
-
-            border-radius: 5px;
-
-            cursor: pointer;
-        }
-
-        .send-btn:hover {
-            background-color: #6A1B9A;
-        }
-
+        .send-btn{
+            margin-left:10px;
+            background:#4A148C;
+            color:white;
+            border:none;
+            padding:10px 15px;
+            border-radius:5px;
+    }
     </style>
 </head>
-
 <body>
-
-<!-- NAVBAR -->
-
+<!-- Coach Navigation Bar -->
 <header class="navbar">
-
     <div class="logo">Coach</div>
-
     <nav>
         <ul class="nav-links">
             <li><a href="CoachHome.html">Home</a></li>
             <li><a href="CoachEvent.html">Events</a></li>
-            <li><a href="AthletesForCoach.html">Athlete</a></li>
+            <li><a href="AthletesForCoach.html">Athletes</a></li>
             <li><a href="CoachResult.html">Results</a></li>
             <li><a href="CoachNews.html">News</a></li>
             <li><a href="CoachProfile.html">Profile</a></li>
             <li><a href="" onclick="logout()">Logout</a></li>
         </ul>
     </nav>
-
 </header>
 
-<!-- MAIN -->
-
 <section id="main-section">
-
-    <h1 id="welcome-message" style="text-align:center;"></h1>
-
-    <h3 style="text-align:center; margin-top:20px;">
-        Assisting Athletes
-    </h3>
-
-    <div id="athlete-list"></div>
-
-    <p id="no-data" style="text-align:center; display:none;">
-        You are not assisting any athletes.
-    </p>
-
-    <!-- ACTION CARDS -->
-
-    <div style="
-        margin-top:50px;
-        display:flex;
-        gap:30px;
-        justify-content:center;
-        flex-wrap:wrap;
-    ">
-
-        <div class="action-card"
-             onclick="location.href='Coach_Athlete.html';"
-             style="background:url('images/athleteImage1.png') center/cover;">
-            <button class="btn btn-warning">
-                Check your Athletes
-            </button>
-        </div>
-
-        <div class="action-card"
-             onclick="location.href='CoachEventOngoing.html';"
-             style="background:url('images/ongoingEvent.png') center/cover;">
-            <button class="btn btn-warning">
-                Check Ongoing Events
-            </button>
-        </div>
-
-        <div class="action-card"
-             onclick="location.href='AssistanceRequestToCoach.html';"
-             style="background:url('images/eventHistory.png') center/cover;">
-            <button class="btn btn-warning">
-                Check All Requests
-            </button>
-        </div>
-
-        <div class="action-card"
-             onclick="location.href='CoachNews.html';"
-             style="background:url('images/sportsNews.png') center/cover;">
-            <button class="btn btn-warning">
-                Check News
-            </button>
-        </div>
-
+    <h1 id="welcome-message" style="text-align: center; margin-bottom: 20px;"></h1>
+    <h3 style="text-align: center;">Assisting Athletes</h3>
+    <div id="athlete-list">
+        <!-- Athlete cards will be dynamically inserted here -->
     </div>
+    <p id="no-data" class="no-data" style="display: none;">You are not assisting any athletes.</p>
 
+
+    <!-- Action Cards Section -->
+    <div id="action-cards-section" style="margin-top: 50px; display: flex; gap: 30px; justify-content: center;">
+        <div class="action-card" onclick="location.href='Coach_Athlete.html';" style="background: url('images/athleteImage1.png') no-repeat center/cover; height: 200px;">
+            <button style="background-color: #f9a826; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Check your Athletes</button>
+        </div>
+        <div class="action-card" onclick="location.href='CoachEventOngoing.html';" style="background: url('images/ongoingEvent.png') no-repeat center/cover; height: 200px;">
+            <button style="background-color: #f9a826; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Check Ongoing Events</button>
+        </div>
+        <div class="action-card" onclick="location.href='AssistanceRequestToCoach.html';" style="background: url('images/eventHistory.png') no-repeat center/cover; height: 200px;">
+            <button style="background-color: #f9a826; color: white; padding: 10px 20px; border: none; border-radius: 5px; text-align: center;">Check All Requests</button>
+        </div>
+        <div class="action-card" onclick="location.href='CoachNews.html';" style="background: url('images/sportsNews.png') no-repeat center/cover; height: 200px;">
+            <button style="background-color: #f9a826; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Check News</button>
+        </div>
+    </div>
 </section>
-
-<!-- CHATBOT BUTTON -->
 
 <button class="chatbot-button" onclick="toggleChatbot()">
     <i class="bi bi-robot"></i>
 </button>
 
-<!-- CHATBOT -->
-
 <div class="chatbot-container" id="chatbotContainer">
 
     <div class="chatbot-header">
-
         <h5>AI Squad Assistant</h5>
 
-        <span class="close-chat" onclick="toggleChatbot()">
+        <span class="close-chat"
+              onclick="toggleChatbot()">
             &times;
         </span>
 
@@ -394,208 +296,281 @@
 
     <div id="chatBox"></div>
 
-    <div class="chat-input-container" style="display:flex; flex-direction:column;">
-
-    <!-- CSV Upload -->
-    <input
-        type="file"
-        id="csvFile"
-        accept=".csv"
-        class="form-control mb-2">
-
-      <!-- Chat Input -->
-      <div style="display:flex; width:100%;">
+    <div class="chat-input-container">
 
         <input
-            type="text"
-            id="chatInput"
-            placeholder="Ask about squads..."
-            style="flex:1;">
+            type="file"
+            id="csvFile"
+            accept=".csv"
+            class="form-control mb-2">
 
-        <button type="button" class="send-btn" onclick="sendMessage()">
-            Send
-        </button>
+        <div style="display:flex;">
 
-      </div>
+            <input
+                id="chatInput"
+                type="text"
+                class="form-control"
+                placeholder="Ask about squad...">
+
+            <button
+                class="send-btn"
+                onclick="sendMessage()">
+                Send
+            </button>
+
+        </div>
 
     </div>
 
 </div>
 
-<!-- FOOTER -->
-
+<!-- Footer -->
 <footer>
-    <p>&copy; 2025 Sports Management Platform</p>
+    <p>&copy; 2026 Sports Management Platform. All rights reserved.</p>
 </footer>
-
-<!-- SCRIPTS -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="TokenCheck.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="TokenCheck.js"> </script>
 <script>
+    function toggleChatbot(){
 
-    function toggleChatbot() {
+    const chatbot=document.getElementById("chatbotContainer");
 
-        const chatbot = document.getElementById("chatbotContainer");
+    chatbot.style.display=
+        chatbot.style.display==="flex"
+        ?"none":"flex";
+    }
+    async function sendMessage(){
 
-        if (chatbot.style.display === "flex") {
-            chatbot.style.display = "none";
-        } else {
-            chatbot.style.display = "flex";
-        }
+    const input=document.getElementById("chatInput");
+    const file=document.getElementById("csvFile").files[0];
+    const chatBox=document.getElementById("chatBox");
+
+    const message=input.value.trim();
+
+    if(!message){
+        alert("Enter a message");
+        return;
     }
 
-    async function sendMessage() {
-
-        const input = document.getElementById("chatInput");
-        const file = document.getElementById("csvFile").files[0];
-        const chatBox = document.getElementById("chatBox");
-
-        const message = input.value.trim();
-
-        if (!message) {
-            alert("Enter a message");
-            return;
-        }
-
-        if (!file) {
-            alert("Please upload a CSV file first.");
-            return;
-        }
-
-        chatBox.innerHTML += `
-            <div class="user-message">
-                ${message}
-            </div>
-        `;
-
-        input.value="";
-
-        const formData = new FormData();
-
-        formData.append("message", message);
-        formData.append("file", file);
-
-        try {
-
-            const response = await fetch(
-                "http://localhost:8080/api/chat/upload",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("HTTP Error: " + response.status);
-            }
-
-            const data = await response.json();
-
-            console.log("Received:", data);
-
-            displayResponse(data);
-
-        } catch (e) {
-
-            console.error(e);
-
-            chatBox.innerHTML += `
-                <div class="ai-message">
-                    Error connecting to backend.
-                </div>`;
-        }
-
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    // Reusable function
-    function createList(players) {
-
-        if (!players || players.length === 0)
-            return "<p>None</p>";
-
-        return `
-            <ul>
-                ${players.map(player => `
-                    <li>
-                        <b>${player.name || player.Name}</b>
-                        (${player.role || player.Role})
-                        - ${(player.selectionProbability ?? player.selection_probability).toFixed(3)}
-                    </li>
-                `).join("")}
-            </ul>
-        `;
-    }
-    function displayResponse(data) {
-
-        const chatBox = document.getElementById("chatBox");
-
-        let squadHtml = "";
-
-        if (data.squad && data.squad.length > 0) {
-
-            squadHtml = `
-                <ul>
-                    ${data.squad.map(player => `
-                        <li>
-                            <b>${player.name}</b>
-                            (${player.role})
-                        </li>
-                    `).join("")}
-                </ul>
-            `;
-        }
-
-        chatBox.innerHTML += `
-                <div class="ai-message">
-
-                    <h4>🏏 Best Batsmen</h4>
-                    ${createList(data.bestBatsmen)}
-
-                    <h4>🎯 Best Bowlers</h4>
-                    ${createList(data.bestBowlers)}
-
-                    <h4>⭐ Best All-Rounders</h4>
-                    ${createList(data.bestAllRounders)}
-
-                    <h4>🧤 Best Wicketkeepers</h4>
-                    ${createList(data.bestWicketkeepers)}
-
-                    <hr>
-
-                    <h4>✅ Final Squad</h4>
-                    ${createList(data.squad)}
-
-                    <hr>
-
-                    <p><b>Captain:</b> ${data.captain}</p>
-
-                    <p><b>Vice Captain:</b> ${data.viceCaptain}</p>
-
-                    <p>${data.explanation}</p>
-
-                </div>
-                `;
-
-        chatBox.scrollTop = chatBox.scrollHeight;
+    if(!file){
+        alert("Upload CSV first.");
+        return;
     }
 
-    // ENTER KEY SUPPORT
+    chatBox.innerHTML+=`
+        <div class="user-message">${message}</div>
+    `;
 
-    document.addEventListener("DOMContentLoaded", () => {
+    input.value="";
 
-        document
-            .getElementById("chatInput")
-            .addEventListener("keypress", function(event) {
+    const formData=new FormData();
 
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    sendMessage();
-                }
+    formData.append("message",message);
+    formData.append("file",file);
+
+    try{
+
+        const response=await fetch(
+            "http://localhost:8080/api/chat/upload",
+            {
+                method:"POST",
+                body:formData
             });
+
+        const data=await response.json();
+
+        displayResponse(data);
+
+    }catch(e){
+
+        chatBox.innerHTML+=`
+        <div class="ai-message">
+            Error connecting to backend.
+        </div>`;
+    }
+
+      chatBox.scrollTop=chatBox.scrollHeight;
+    }
+    function createList(players){
+
+    if(!players || players.length===0)
+        return "<p>None</p>";
+
+    return `
+        <ul>
+        ${players.map(player=>`
+            <li>
+            <b>${player.name||player.Name}</b>
+            (${player.role||player.Role})
+            - ${(player.selectionProbability ??
+               player.selection_probability).toFixed(3)}
+            </li>
+        `).join("")}
+        </ul>
+    `;
+    }  
+    function displayResponse(data){
+
+    const chatBox=document.getElementById("chatBox");
+
+    chatBox.innerHTML+=`
+
+    <div class="ai-message">
+
+        <h5>🏏 Best Batsmen</h5>
+        ${createList(data.bestBatsmen)}
+
+        <h5>🎯 Best Bowlers</h5>
+        ${createList(data.bestBowlers)}
+
+        <h5>⭐ Best All-Rounders</h5>
+        ${createList(data.bestAllRounders)}
+
+        <h5>🧤 Best Wicketkeepers</h5>
+        ${createList(data.bestWicketkeepers)}
+
+        <hr>
+
+        <h5>Final Squad</h5>
+
+        ${createList(data.squad)}
+
+        <hr>
+
+        <b>Captain:</b> ${data.captain}<br>
+
+        <b>Vice Captain:</b> ${data.viceCaptain}
+
+        <p style="margin-top:10px;">
+        ${data.explanation}
+        </p>
+
+    </div>
+
+    `;
+
+    chatBox.scrollTop=chatBox.scrollHeight;
+    }
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        try {
+            let date;
+            if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return dateString;
+            } else if (dateString.includes('T')) {
+                date = new Date(dateString);
+            } else if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                const [month, day, year] = dateString.split('/');
+                date = new Date(year, month - 1, day);
+            } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                date = new Date(dateString);
+            }
+            if (isNaN(date.getTime())) {
+                return dateString || "N/A";
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString || "N/A";
+        }
+    }
+
+    async function fetchCoachName() {
+         const coachId = localStorage.getItem('roleId');
+         const token = localStorage.getItem('token');
+
+         try {
+             const response = await fetch(`http://localhost:8080/api/coach/search?id=${coachId}`, {
+                 headers: {
+                     'Authorization': `Bearer ${token}`
+                 }
+             });
+             const coachData = await response.json();
+
+             document.getElementById('welcome-message').textContent = `Welcome, ${coachData.name}`;
+         } catch (error) {
+             console.error('Error fetching coach name:', error);
+         }
+     }
+
+     async function fetchAthleteDetails() {
+         const coachId = localStorage.getItem('roleId');
+         const token = localStorage.getItem('token');
+         const athleteListContainer = document.getElementById('athlete-list');
+         const noDataMessage = document.getElementById('no-data');
+
+         try {
+             const assistanceResponse = await fetch(`http://localhost:8080/api/assistance/search?coachId=${coachId}`, {
+                 headers: {
+                     'Authorization': `Bearer ${token}`
+                 }
+             });
+             const assistanceData = await assistanceResponse.json();
+
+             const filteredAthletes = assistanceData.filter(item => item.status === 'ACCEPTED').slice(-3);
+
+             if (filteredAthletes.length === 0) {
+                 noDataMessage.style.display = 'block';
+                 return;
+             }
+
+             noDataMessage.style.display = 'none';
+             for (const athlete of filteredAthletes) {
+                 const athleteResponse = await fetch(`http://localhost:8080/api/athlete/profile/search?id=${athlete.athleteId}`, {
+                     headers: {
+                         'Authorization': `Bearer ${token}`
+                     }
+                 });
+                 const athleteData = await athleteResponse.json();
+
+                 const age = new Date().getFullYear() - new Date(athleteData.birthDate).getFullYear();
+
+                 const athleteCard = document.createElement('div');
+                 athleteCard.className = 'athlete-card';
+                 athleteCard.innerHTML = `
+                     <img src="data:image/png;base64,${athleteData.imageLink}" alt="Athlete Image">
+                     <div class="athlete-details">
+                         <h3>${athleteData.name}</h3>
+                         <p><strong>Category:</strong> ${athleteData.category}</p>
+                         <p><strong>Age:</strong> ${age} years</p>
+                         <p><strong>Height:</strong> ${athleteData.height} cm</p>
+                         <p><strong>Weight:</strong> ${athleteData.weight} kg</p>
+                         <p><strong>Request Date:</strong> ${formatDate(athlete.requestDate)}</p>
+                     </div>
+                 `;
+
+                 athleteListContainer.appendChild(athleteCard);
+             }
+         } catch (error) {
+             console.error('Error fetching athlete details:', error);
+         }
+     }
+     document.addEventListener("DOMContentLoaded",()=>{
+
+     document.getElementById("chatInput")
+    .addEventListener("keypress",function(e){
+
+        if(e.key==="Enter"){
+
+            e.preventDefault();
+
+            sendMessage();
+
+        }
+
     });
 
+   });
+     fetchCoachName();
+     fetchAthleteDetails();
 </script>
-
 </body>
 </html>

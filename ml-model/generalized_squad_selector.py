@@ -123,22 +123,7 @@ ALIAS_LOOKUP = build_alias_lookup()
 # ==========================================
 
 def standardize_uploaded_csv(df, verbose=True):
-    """
-    Standardize uploaded cricket CSV into a common schema.
 
-    Handles:
-    - India-style columns
-    - Australia/Wikipedia-style columns
-    - likely England-style variants
-    - alias mapping
-    - Career -> First/Last fallback
-    - Role cleaning
-    - Selected present/absent
-    - numeric cleanup
-
-    Returns:
-        df_std, info
-    """
 
     info = {
         "original_columns": list(df.columns),
