@@ -31,17 +31,18 @@ WORKDIR /app
 
 # Install Python
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
+    apt-get install -y python3 python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy Spring Boot jar
-COPY --from=builder /app/target/*.jar app.jar
+# Create virtual environment
+RUN python3 -m venv /opt/venv
 
-# Copy ML model
-COPY ml-model ./ml-model
+# Use the virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Install Python dependencies
-RUN pip3 install --no-cache-dir -r ./ml-model/requirements.txt
+# Install dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r ./ml-model/requirements.txt
 
 EXPOSE 8080
 
