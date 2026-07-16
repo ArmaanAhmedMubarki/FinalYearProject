@@ -145,7 +145,7 @@ http://localhost:8080
 
 ### Frontend
 
-Open the frontend using **Live Server** in Visual Studio Code or any local web server.
+Open the frontend using Live Server in Visual Studio Code or any local web server.
 
 Default frontend URL:
 
@@ -157,6 +157,6 @@ http://127.0.0.1:5500
 
 # Notes
 
-- This repository contains the development version** of AthleticaX.
+- This repository contains the development version of AthleticaX.
 - The chatbot currently requires a local Ollama installation.
 - For cloud deployment, Ollama will be replaced with the Groq API, eliminating the need for local LLM installation.
