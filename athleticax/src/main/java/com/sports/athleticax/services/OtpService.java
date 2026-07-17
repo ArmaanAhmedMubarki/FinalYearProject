@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -19,6 +20,8 @@ public class OtpService {
 
     @Autowired
     private JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
     public void sendOtp(String email) {
 
@@ -42,6 +45,7 @@ public class OtpService {
         //  SEND EMAIL
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
             message.setTo(email);
             message.setSubject("AthleticaX OTP Verification");
             message.setText("Your OTP is: " + otp + "\nValid for 5 minutes.");
