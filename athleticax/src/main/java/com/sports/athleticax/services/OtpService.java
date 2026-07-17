@@ -20,7 +20,7 @@ public class OtpService {
 
     @Autowired
     private JavaMailSender mailSender;
-    @Value("${spring.mail.username}")
+    @Value("${mail.from}")
     private String fromEmail;
 
     public void sendOtp(String email) {
