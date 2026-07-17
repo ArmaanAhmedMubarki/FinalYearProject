@@ -126,12 +126,21 @@ public class ChatService {
     // RUN PYTHON SQUAD SELECTOR
     // =========================================================
     private JsonNode runPythonSquadSelector(String csvPath) throws Exception {
-
-        // Adjust path if needed based on your project structure
-        String pythonScriptPath = "../ml-model/generalized_squad_selector.py";
-
+        
+        // Build absolute path to the Python script
+        String pythonScriptPath =
+                System.getProperty("user.dir")
+                + "/ml-model/generalized_squad_selector.py";
+        
+        // Check if the file exists
+        File script = new File(pythonScriptPath);
+        
+        System.out.println("Script path: " + script.getAbsolutePath());
+        System.out.println("Script exists: " + script.exists());
+        
+        // Use python3 on Render (Linux)
         ProcessBuilder pb = new ProcessBuilder(
-                "python",
+                "python3",
                 pythonScriptPath,
                 csvPath,
                 "2022"
