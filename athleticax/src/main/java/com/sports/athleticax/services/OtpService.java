@@ -1,10 +1,9 @@
 package com.sports.athleticax.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
+
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -19,10 +18,7 @@ public class OtpService {
     private static final int OTP_VALID_SECONDS = 300;
 
     @Autowired
-    private JavaMailSender mailSender;
-    @Value("${mail.from}")
-    private String fromEmail;
-
+    private EmailService emailService;
     public void sendOtp(String email) {
 
         if (email == null || email.isEmpty()) {
@@ -44,20 +40,12 @@ public class OtpService {
 
         //  SEND EMAIL
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(email);
-            message.setSubject("AthleticaX OTP Verification");
-            message.setText("Your OTP is: " + otp + "\nValid for 5 minutes.");
-
-            mailSender.send(message);
-
-            System.out.println("OTP sent to email: " + email + " OTP=" + otp);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to send OTP email");
-        }
+                emailService.sendOtpEmail(email, otp);
+                System.out.println("OTP sent to email: " + email);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Failed to send OTP email: " + e.getMessage());
+            }
     }
 
     public boolean verifyOtp(String email, String otp) {
