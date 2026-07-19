@@ -14,7 +14,7 @@ public class NewsService {
     public String getSportsNews() {
 
         String url =
-                "https://newsapi.org/v2/top-headlines?country=in&category=sports&apiKey=" + apiKey;
+                "https://newsapi.org/v2/top-headlines?category=sports&apiKey=" + apiKey;
 
         return restTemplate.getForObject(url, String.class);
 
