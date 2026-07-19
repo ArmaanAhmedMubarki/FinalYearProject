@@ -183,8 +183,6 @@
 <script src="TokenCheck.js"></script>
 <script>
 
-    // API Key
-    const API_KEY = 'a7034c5093b144a9b450dc2251612f1e';
 
     async function fetchSportsNews() {
         const newsContainer = document.getElementById('news-container');
@@ -194,7 +192,7 @@
         loadingSpinner.style.display = 'block';
 
         try {
-            const url = `https://newsapi.org/v2/top-headlines?category=sports&apiKey=${API_KEY}`;
+            const url = "https://finalyearproject-op6d.onrender.com/api/news/sports";
             const response = await fetch(url);
 
             if (!response.ok) throw new Error('Network response was not ok');
