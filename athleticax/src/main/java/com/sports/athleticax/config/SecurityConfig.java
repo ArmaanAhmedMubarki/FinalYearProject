@@ -51,6 +51,7 @@ public class SecurityConfig
                         .requestMatchers("/api/events/**").permitAll()
                         .requestMatchers("/api/user/event_register/**").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
+                        .requestMatchers("/api/news/**").permitAll() 
                         .anyRequest().authenticated()
                 )
 
